@@ -18,7 +18,6 @@ class StateNode {
     this.initial = config.initial;
     this.name = name;
 
-    // make it an object instead of array
     this.states = Object.keys(config.states || {}).reduce((acc, x) => {
       acc[x] = new StateNode({
         machine,

@@ -16,20 +16,20 @@ const machine = StateChart(
     },
     states: {
       idle: {
-        initial: 'inner.idle',
+        initial: 'inner',
         entry: ['log'],
         exit: ['log'],
         states: {
-          'inner.idle': {
+          inner: {
             always: {
               actions: ['alwaysFunction']
             },
             on: {
-              FETCH: 'loading'
+              FETCH: 'working'
             }
           },
-          'working.idle': {},
-          'done.idle': {}
+          working: {},
+          done: {}
         }
       },
       loading: {
