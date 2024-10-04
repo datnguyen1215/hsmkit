@@ -22,41 +22,36 @@ class StateMachine {
 
     this.states[this.root.name] = this.root;
 
-    // go through all the events and check the target now
-    const referenceTarget = state => {
-      const events = Object.keys(state.on);
+    const findTarget = (targetName, state) => {
+      if (state.states[targetName]) return state.states[targetName];
+      if (state.parent && state.parent.states[targetName])
+        return state.parent.states[targetName];
+      return null;
+    };
 
-      // go through all the events of this state.
-      for (let event of events) {
-        console.log(`checking event: ${event}`);
-        // go through all the event nodes of this event.
-        for (let node of state.on[event].nodes) {
-          if (!node.target) continue;
+    const resolveTarget = (node, state) => {
+      if (!node.target) return;
 
-          // check the target against the states, in case of #id assigns
-          let target = this.states[node.target];
+      const target = this.states[node.target] || findTarget(node.target, state);
 
-          if (target) {
-            console.log(`assigning target ${node.target} to ${target.name}`);
-            node.target = target;
-            continue;
-          }
-
-          // check the target gainst the parent states
-
-          target =
-            state.states[node.target] || state.parent.states[node.target];
-
-          if (!target)
-            throw new Error(`target ${node.target} not found in ${state.name}`);
-
-          console.log(`assigning target ${node.target} to ${target.name}`);
-          node.target = target;
-        }
+      if (!target) {
+        throw new Error(`Target ${node.target} not found in ${state.name}`);
       }
 
-      // go through all the states inside.
-      for (let s in state.states) referenceTarget(state.states[s]);
+      console.log(`Assigning target ${node.target} to ${target.name}`);
+      node.target = target;
+    };
+
+    const resolveEventTargets = state => {
+      Object.entries(state.on).forEach(([event, { nodes }]) => {
+        console.log(`Checking event: ${event}`);
+        nodes.forEach(node => resolveTarget(node, state));
+      });
+    };
+
+    const referenceTarget = state => {
+      resolveEventTargets(state);
+      Object.values(state.states).forEach(referenceTarget);
     };
 
     referenceTarget(this.root);
