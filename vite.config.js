@@ -1,6 +1,5 @@
-// generate config file for library building
-
 import { defineConfig } from 'vite';
+import path from 'path';
 
 export default defineConfig({
   build: {
@@ -11,6 +10,6 @@ export default defineConfig({
       formats: ['es', 'cjs']
     },
     sourcemap: true,
-    minify: false,
+    minify: false
   }
 });

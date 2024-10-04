@@ -1,26 +1,75 @@
-import StateMachine from './StateNode';
+import StateChart from './hsm';
 
-const machine = StateMachine({
-  initial: 'idle',
-  entry: ['hello'],
-  exit: ['goodbye'],
-  states: {
-    idle: {
-      entry: ['log'],
-      exit: ['log'],
-      on: {
-        FETCH: 'loading'
+const machine = StateChart(
+  {
+    initial: 'idle',
+    entry: ['hello'],
+    exit: ['goodbye'],
+    on: {
+      HELLO: {
+        target: 'hello',
+        actions: ['hello', 'world']
       }
     },
-    loading: {
-      on: {
-        RESOLVE: 'success',
-        REJECT: 'failure'
-      }
+    always: {
+      actions: ['alwaysFunction']
     },
-    success: {},
-    failure: {}
+    states: {
+      idle: {
+        initial: 'inner.idle',
+        entry: ['log'],
+        exit: ['log'],
+        states: {
+          'inner.idle': {
+            always: {
+              actions: ['alwaysFunction']
+            },
+            on: {
+              FETCH: 'loading'
+            }
+          },
+          'working.idle': {},
+          'done.idle': {}
+        }
+      },
+      loading: {
+        on: {
+          RESOLVE: 'success',
+          REJECT: 'failure'
+        }
+      },
+      hello: {
+        on: {
+          WORLD: 'idle'
+        }
+      },
+      success: {},
+      failure: {}
+    }
+  },
+  {
+    actions: {
+      log: () => {
+        console.log(`I'm wirint log from action [log]`);
+      },
+      hello: () => {
+        console.log(`I'm writing 'hello' from [hello] action`);
+        return 'yooo';
+      },
+      world: () => {
+        return 'loooo';
+      },
+      goodbye: () => {
+        console.log(`I'm writing 'goodbye' from [goodbye] action`);
+      },
+      alwaysFunction: () => {
+        console.log('launching always function');
+      }
+    }
   }
-});
+);
 
-machine.trigger('FETCH');
+machine.start();
+machine.dispatch('FETCH');
+machine.dispatch('HELLO');
+machine.dispatch('WORLD');
