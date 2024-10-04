@@ -28,7 +28,13 @@ const machine = StateChart(
               FETCH: 'working'
             }
           },
-          working: {},
+          working: {
+            on: {
+              HELLO: {
+                actions: ['asyncFunction']
+              }
+            }
+          },
           done: {}
         }
       },
@@ -64,6 +70,13 @@ const machine = StateChart(
       },
       alwaysFunction: () => {
         console.log('launching always function');
+      },
+      asyncFunction: async () => {
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            resolve('async function done');
+          }, 1000);
+        });
       }
     }
   }
