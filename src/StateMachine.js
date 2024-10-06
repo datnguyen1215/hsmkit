@@ -7,10 +7,11 @@ class StateMachine {
    */
   constructor(config, setup) {
     this.config = config;
-    this.context = config.context;
-    this.setup = setup;
+    this.context = config.context || {};
     this.states = {};
-    this.setup = setup;
+    this.setup = setup || { actions: {}, guards: {} };
+    this.setup.actions = this.setup.actions || {};
+    this.setup.guards = this.setup.guards || {};
 
     this.state = null;
 
@@ -57,20 +58,20 @@ class StateMachine {
     referenceTarget(this.root);
   }
 
-  dispatch(event, data = {}) {
-    const result = this.state.dispatch(event, data);
+  dispatch(eventName, data = {}) {
+    const result = this.state.dispatch(eventName, data);
 
     if (!result.target) return;
 
-    if (!result.bubbles.length) this.state.exit({ type: event, data });
+    if (!result.bubbles.length) this.state.exit({ type: eventName, data });
 
     while (result.bubbles.length) {
       const bubbleState = result.bubbles.pop();
       // TODO: Save results to handle actions results.
-      bubbleState.exit({ type: event, data });
+      bubbleState.exit({ type: eventName, data });
     }
 
-    this.transition(result.target, { type: event, data });
+    this.transition(result.target, { type: eventName, data });
   }
 
   transition(state, event) {

@@ -66,33 +66,33 @@ class StateNode {
 
   /**
    * Dispatches an event to the state node.
-   * @param {string} event - The event name to dispatch.
+   * @param {string} eventName - The event name to dispatch.
    * @param {object} [data={}] - Optional data to pass with the event.
    * @param {Array} [bubbles=[]] - Tracks the event bubbling history.
    * @returns {object} Results of the dispatched event.
    */
-  dispatch(event, data = {}, bubbles = []) {
-    const ev = this.on[event];
+  dispatch(eventName, data = {}, bubbles = []) {
+    const ev = this.on[eventName];
 
     // bubble event if necessary
     if (!ev) {
       if (!this.parent) return {};
 
-      console.log(`${this.name} bubbling event: ${event}`);
-      const results = this.parent.dispatch(event, data, [this, ...bubbles]);
+      console.log(`${this.name} bubbling event: ${eventName}`);
+      const results = this.parent.dispatch(eventName, data, [this, ...bubbles]);
 
-      this.always(this.machine.context, { type: event, data });
+      this.always(this.machine.context, { type: eventName, data });
 
       return results;
     }
 
-    console.log(`${this.name} dispatching event: ${event}`);
+    console.log(`${this.name} dispatching event: ${eventName}`, data);
     const results = {
       bubbles,
-      ...ev.execute(this.machine.context, { type: event, data })
+      ...ev.execute(this.machine.context, { type: eventName, data })
     };
 
-    this.always(this.machine.context, { type: event, data });
+    this.always(this.machine.context, { type: eventName, data });
 
     return results;
   }
