@@ -8,32 +8,32 @@
  */
 
 /**
- * @typedef {Object} StateNodeConfig
+ * @typedef {Object} hsm.StateNodeConfig
  * @property {string} [id]
  * @property {string} [initial]
  * @property {string[]} [entry]
  * @property {string[]} exit
- * @property {Object.<string, EventConfig|EventConfig[]} [on]
- * @property {EventConfig|EventConfig[]} [always]
- * @property {Object.<string, StateConfig>} [states]
+ * @property {Object.<string, hsm.EventConfig | hsm.EventConfig[]} [on]
+ * @property {hsm.EventConfig | hsm.EventConfig[]} [always]
+ * @property {Object.<string, hsm.StateConfig>} [states]
  */
 
 /**
- * @callback ActionFunction
+ * @callback hsm.ActionFunction
  * @param {object} context
  * @param {object} data
  * @returns {object}
  */
 
 /**
- * @callback GuardFunction
+ * @callback hsm.GuardFunction
  * @param {object} context
  * @param {object} data
  * @returns {boolean}
  */
 
 /**
- * @typedef {object} Setup
- * @property {object.<string, ActionFunction>} [actions]
- * @property {object.<string, GuardFunction>} [guards]
+ * @typedef {object} hsm.Setup
+ * @property {object.<string, hsm.ActionFunction>} [actions]
+ * @property {object.<string, hsm.GuardFunction>} [guards]
  */
