@@ -81,15 +81,18 @@ class StateNode {
       console.log(`${this.name} bubbling event: ${event}`);
       const results = this.parent.dispatch(event, data, [this, ...bubbles]);
 
-      this.always();
+      this.always(this.machine.context, { type: event, data });
 
       return results;
     }
 
     console.log(`${this.name} dispatching event: ${event}`);
-    const results = { bubbles, ...ev.execute(this.machine.context, data) };
+    const results = {
+      bubbles,
+      ...ev.execute(this.machine.context, { type: event, data })
+    };
 
-    this.always();
+    this.always(this.machine.context, { type: event, data });
 
     return results;
   }
