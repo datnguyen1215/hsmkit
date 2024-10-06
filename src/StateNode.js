@@ -103,9 +103,11 @@ class StateNode {
    */
   entry(event) {
     console.log(`entry: ${this.name}`);
-    return this.entryActions.map(x => ({
-      [x.name]: x.execute(this.machine.context, event)
-    }));
+    return this.entryActions
+      .map(x => ({
+        [x.name]: x.execute(this.machine.context, event)
+      }))
+      .reduce((acc, x) => ({ ...acc, ...x }), {});
   }
 
   /**
@@ -114,9 +116,11 @@ class StateNode {
    */
   exit(event) {
     console.log(`exit: ${this.name}`);
-    return this.exitActions.map(x => ({
-      [x.name]: x.execute(this.machine.context, event)
-    }));
+    return this.exitActions
+      .map(x => ({
+        [x.name]: x.execute(this.machine.context, event)
+      }))
+      .reduce((acc, x) => ({ ...acc, ...x }), {});
   }
 
   /**

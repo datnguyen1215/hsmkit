@@ -60,23 +60,35 @@ class StateMachine {
 
   dispatch(eventName, data = {}) {
     const result = this.state.dispatch(eventName, data);
+    let exitResult = {};
 
-    if (!result.target) return;
+    if (!result.target) return {};
 
-    if (!result.bubbles.length) this.state.exit({ type: eventName, data });
+    if (!result.bubbles.length)
+      exitResult = {
+        [this.state.name]: this.state.exit({ type: eventName, data })
+      };
 
     while (result.bubbles.length) {
       const bubbleState = result.bubbles.pop();
       // TODO: Save results to handle actions results.
-      bubbleState.exit({ type: eventName, data });
+      exitResult = {
+        ...exitResult,
+        [this.state.name]: bubbleState.exit({ type: eventName, data })
+      };
     }
 
-    this.transition(result.target, { type: eventName, data });
+    const entryResult = this.transition(result.target, {
+      type: eventName,
+      data
+    });
+
+    return { actions: result.actions, exit: exitResult, entry: entryResult };
   }
 
   transition(state, event) {
     this.state = state;
-    this.state.entry(event);
+    let entryResults = { [state.name]: this.state.entry(event) };
 
     while (this.state.initial) {
       const next = this.state.states[this.state.initial];
@@ -84,8 +96,13 @@ class StateMachine {
       if (!next) return;
 
       this.state = next;
-      this.state.entry(event);
+      entryResults = {
+        ...entryResults,
+        [this.state.name]: this.state.entry(event)
+      };
     }
+
+    return entryResults;
   }
 
   start() {
