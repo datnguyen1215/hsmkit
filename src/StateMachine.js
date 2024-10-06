@@ -62,20 +62,20 @@ class StateMachine {
 
     if (!result.target) return;
 
-    if (!result.bubbles.length) this.state.exit();
+    if (!result.bubbles.length) this.state.exit({ type: event, data });
 
     while (result.bubbles.length) {
       const bubbleState = result.bubbles.pop();
       // TODO: Save results to handle actions results.
-      bubbleState.exit();
+      bubbleState.exit({ type: event, data });
     }
 
-    this.transition(result.target);
+    this.transition(result.target, { type: event, data });
   }
 
-  transition(state) {
+  transition(state, event) {
     this.state = state;
-    this.state.entry();
+    this.state.entry(event);
 
     while (this.state.initial) {
       const next = this.state.states[this.state.initial];
@@ -83,12 +83,12 @@ class StateMachine {
       if (!next) return;
 
       this.state = next;
-      this.state.entry();
+      this.state.entry(event);
     }
   }
 
   start() {
-    this.transition(this.root);
+    this.transition(this.root, { type: 'hsm.start' });
   }
 
   stop() {

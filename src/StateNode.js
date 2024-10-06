@@ -101,10 +101,10 @@ class StateNode {
    * Executes entry actions for the state node.
    * @returns {Array} Results of the entry actions.
    */
-  entry() {
+  entry(event) {
     console.log(`entry: ${this.name}`);
     return this.entryActions.map(x => ({
-      [x.name]: x.execute(this.machine.context, {})
+      [x.name]: x.execute(this.machine.context, event)
     }));
   }
 
@@ -112,10 +112,10 @@ class StateNode {
    * Executes exit actions for the state node.
    * @returns {Array} Results of the exit actions.
    */
-  exit() {
+  exit(event) {
     console.log(`exit: ${this.name}`);
     return this.exitActions.map(x => ({
-      [x.name]: x.execute(this.machine.context, {})
+      [x.name]: x.execute(this.machine.context, event)
     }));
   }
 
@@ -123,10 +123,10 @@ class StateNode {
    * Executes the 'always' event for the state node if configured.
    * @returns {object} Result of the 'always' event execution.
    */
-  always() {
+  always(event) {
     if (!this.alwaysEvent) return {};
 
-    return this.alwaysEvent.execute(this.machine.context, {});
+    return this.alwaysEvent.execute(this.machine.context, event);
   }
 }
 
