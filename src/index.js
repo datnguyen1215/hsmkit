@@ -2,87 +2,109 @@ import StateChart from './hsm';
 
 const machine = StateChart(
   {
-    initial: 'idle',
-    entry: ['hello'],
-    exit: ['goodbye'],
+    initial: 'unauthenticated',
     on: {
-      HELLO: {
-        target: 'hello',
-        actions: ['hello', 'world']
+      LOGOUT: {
+        target: 'unauthenticated',
+        actions: ['clearUserData']
       }
     },
-    always: {
-      actions: ['alwaysFunction']
-    },
     states: {
-      idle: {
-        initial: 'inner',
-        entry: ['log'],
-        exit: ['log'],
+      unauthenticated: {
+        on: {
+          LOGIN: {
+            target: 'authenticating',
+            actions: ['logLoginAttempt']
+          },
+          // shouldn't do anything
+          LOGOUT: {}
+        }
+      },
+      authenticating: {
+        entry: ['authenticateUser'],
+        on: {
+          AUTH_SUCCESS: {
+            target: 'authenticated',
+            actions: ['setUser']
+          },
+          AUTH_FAILURE: {
+            target: 'authFailed',
+            actions: ['logError']
+          }
+        }
+      },
+      authenticated: {
+        initial: 'idle',
+        entry: ['fetchUserData'],
         states: {
-          inner: {
-            always: {
-              actions: ['alwaysFunction']
-            },
+          idle: {
             on: {
-              FETCH: 'working'
+              VIEW_PROFILE: 'viewingProfile'
             }
           },
-          working: {
+          viewingProfile: {
             on: {
-              HELLO: {
-                actions: ['asyncFunction']
+              EDIT_PROFILE: {
+                target: 'editingProfile',
+                actions: ['logProfileEdit']
               }
             }
           },
-          done: {}
+          editingProfile: {
+            on: {
+              SAVE_PROFILE: {
+                target: 'idle',
+                actions: ['saveProfileData']
+              },
+              CANCEL: 'viewingProfile'
+            }
+          }
         }
       },
-      loading: {
+      authFailed: {
         on: {
-          RESOLVE: 'success',
-          REJECT: 'failure'
+          RETRY: 'authenticating'
         }
-      },
-      hello: {
-        on: {
-          WORLD: 'idle'
-        }
-      },
-      success: {},
-      failure: {}
+      }
     }
   },
   {
     actions: {
-      log: () => {
-        console.log(`I'm wirint log from action [log]`);
+      logLoginAttempt: () => console.log('User login attempt'),
+      authenticateUser: async (context, event) => {
+        console.log('Authenticating user:', event.data);
+        return await login(event.data.username, event.data.password);
       },
-      hello: () => {
-        console.log(`I'm writing 'hello' from [hello] action`);
-        return 'yooo';
+      setUser: (context, event) => {
+        context.user = event.data.user;
+        console.log('User set:', context.user);
       },
-      world: () => {
-        return 'loooo';
+      logError: (context, event) => {
+        console.log('Login failed: ', event.data.error);
       },
-      goodbye: () => {
-        console.log(`I'm writing 'goodbye' from [goodbye] action`);
-      },
-      alwaysFunction: () => {
-        console.log('launching always function');
-      },
-      asyncFunction: async () => {
-        return new Promise((resolve, reject) => {
-          setTimeout(() => {
-            resolve('async function done');
-          }, 1000);
-        });
-      }
+      fetchUserData: context =>
+        console.log('Fetching user data for:', context.user),
+      clearUserData: context => (context.user = null),
+      logProfileEdit: () => console.log('Editing profile mode'),
+      saveProfileData: (context, event) =>
+        console.log('Profile saved with:', event.data)
     }
   }
 );
 
+const login = async (username, password) => {
+  try {
+    if (!username || !password)
+      throw new Error('Username and password required');
+
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    machine.dispatch('AUTH_SUCCESS', { user: { name: 'John Doe' } });
+  } catch (error) {
+    machine.dispatch('AUTH_FAILURE', { error });
+  }
+};
+
 machine.start();
-machine.dispatch('FETCH');
-machine.dispatch('HELLO');
-machine.dispatch('WORLD');
+machine.dispatch('LOGOUT');
+machine.dispatch('LOGIN', { username: 'yoo', password: 'bar' });
