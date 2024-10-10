@@ -1,13 +1,13 @@
 import { defineConfig } from 'vite';
-import path from 'path';
 
 export default defineConfig({
   build: {
+    outDir: 'dist',
     lib: {
-      entry: 'src/index.js',
+      entry: 'src/hsm.js',
       name: 'hsm',
-      fileName: format => `hsm.${format}`,
-      formats: ['es', 'cjs']
+      fileName: () => `hsm.js`,
+      formats: ['cjs']
     },
     sourcemap: true,
     minify: false
