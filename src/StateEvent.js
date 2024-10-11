@@ -3,7 +3,7 @@ import assert from './utils/assert';
 class StateEvent {
   /**
    * @param {object} opts
-   * @param {StateNode} opts.state - The state node.
+   * @param {import('./StateNode').default} opts.state - The state node.
    * @param {string | hsm.EventNode | hsm.EventNode[]} opts.config - The configuration of the event.
    * @param {string} opts.name - The name of the event.
    */
@@ -17,6 +17,26 @@ class StateEvent {
 
     // normalize config
     this.config = this.normalizeConfig(config);
+
+    for (const node of this.config) {
+      assert(
+        !node.target || typeof node.target === 'string',
+        `node.target must be a string: ${node.target}`
+      );
+
+      const actions = node.actions || [];
+      for (const action of actions)
+        assert(
+          state.machine.setup.actions[action],
+          `Invalid action: ${action}`
+        );
+
+      const cond = node.cond;
+      assert(
+        !cond || (typeof cond === 'string' && state.machine.setup.guards[cond]),
+        `Invalid guard: ${cond}`
+      );
+    }
   }
 
   get context() {
