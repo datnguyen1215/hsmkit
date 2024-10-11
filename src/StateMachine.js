@@ -43,7 +43,28 @@ class StateMachine {
       config
     });
 
+    this.validateEvents();
+
     this.transition(this.root.name, { type: '(machine).init' });
+  }
+
+  /**
+   * @private
+   * Validates the events of the state machine making sure that
+   * the target states are valid.
+   **/
+  validateEvents() {
+    for (const state of Object.values(this.states)) {
+      for (const event of Object.values(state.on)) {
+        for (const config of event.config) {
+          if (!config.target) return;
+          assert(
+            state.getNextState(config.target),
+            `Invalid target: ${config.target}`
+          );
+        }
+      }
+    }
   }
 
   /**
