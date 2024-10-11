@@ -6,6 +6,7 @@ const config = {
   initial: 'disconnected',
   states: {
     disconnected: {
+      entry: ['notifyDisconnected'],
       on: {
         CONNECT: 'connecting'
       }
@@ -34,17 +35,41 @@ const config = {
 
 describe('hsm tests', () => {
   let machine = null;
+  let states = {
+    notifyDisconnected: false,
+    connectWebSocket: false,
+    disconnectWebSocket: false
+  };
+
+  beforeEach(() => {});
 
   it('should create with no exceptions', async () => {
     const { expect } = await chai;
-    machine = hsm.create({ config, setup: { actions: {}, guards: {} } });
+    machine = hsm.create({
+      config,
+      setup: {
+        actions: {
+          notifyDisconnected: () => {
+            console.log('notifyDisconnected');
+            states.notifyDisconnected = true;
+          },
+          connectWebSocket: () => {
+            states.connectWebSocket = true;
+          },
+          disconnectWebSocket: () => {
+            states.disconnectWebSocket = true;
+          }
+        },
+        guards: {}
+      }
+    });
     expect(machine).to.be.an('object');
   });
 
   it('machine should have a root state', async () => {
     const { expect } = await chai;
     expect(machine.root).to.be.an('object');
-    expect(machine.root).to.have.property('name', 'websocket');
+    expect(machine.root).to.have.property('name', '(root)');
     expect(machine.root).to.have.property('states');
     expect(machine.root).to.have.property('on');
     expect(machine.root).to.have.property('entry');
@@ -53,6 +78,7 @@ describe('hsm tests', () => {
     expect(machine.root).to.have.property('parent');
     expect(machine.root).to.have.property('id', 'websocket');
     expect(machine.root).to.have.property('initial', 'disconnected');
+    expect(states.notifyDisconnected).to.be.true;
   });
 
   it('root state should have child states like configuration', async () => {

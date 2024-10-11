@@ -42,6 +42,8 @@ class StateMachine {
       name: '(root)',
       config
     });
+
+    this.transition(this.root.name, { type: '(machine).init' });
   }
 
   /**
@@ -71,10 +73,22 @@ class StateMachine {
   transition(stateName, event) {
     assert(stateName, 'stateName is required');
 
-    const next = this.state.parent?.states[stateName] || this.states[stateName];
+    const next = this.state?.getNextState(stateName) || this.states[stateName];
     assert(next, `state not found: ${stateName}`);
 
+    if (next.initial) {
+      this.state = next;
+      return this.transition(next.initial, event);
+    }
+
+    /**
+     * @private
+     * @param {StateNode} state - The state node
+     * @returns {StateNode[]}
+     **/
     const ancestors = state => {
+      if (!state) return [];
+
       const results = [];
       while (state.parent) {
         results.push(state.parent);
@@ -86,32 +100,39 @@ class StateMachine {
     const currentAncestors = ancestors(this.state);
     const nextAncestors = ancestors(next);
 
+    /**
+     * @private
+     * @param {StateNode[]} curAncestors - The current ancestors
+     * @param {StateNode[]} nextAncestors - The next ancestors
+     * @returns {{ entry: StateNode[], exit: StateNode[] }}
+     **/
     const getEntryExit = (curAncestors, nextAncestors) => {
-      const exit = [];
-      for (const current of curAncestors) {
-        const entry = [];
-        for (const next of nextAncestors) {
-          if (current === next) return { entry, exit };
+      const entry = [];
+      for (const next of nextAncestors) {
+        const exit = [];
 
-          entry.push(next);
+        entry.push(next);
+
+        for (const cur of curAncestors) {
+          exit.push(cur);
+          if (next === cur) return { entry, exit };
         }
-        exit.push(current);
       }
+
+      return { entry: [], exit: [] };
     };
 
-    const { entry, exit } = getEntryExit(currentAncestors, nextAncestors);
+    const { entry, exit } = getEntryExit(
+      this.state ? [this.state, ...currentAncestors] : currentAncestors,
+      [next, ...nextAncestors]
+    );
 
-    const exitActions = exit.reduce((acc, state) => {
-      return acc.concat(this.exit(state, event));
-    });
-
-    const entryActions = entry.reduce((acc, state) => {
-      return acc.concat(this.entry(state, event));
-    });
+    const exitResults = exit.map(x => this.exit(x, event));
+    const entryResults = entry.map(x => this.entry(x, event));
 
     this.state = next;
 
-    return { entry: entryActions, exit: exitActions };
+    return { entry: entryResults, exit: exitResults };
   }
 
   /**
