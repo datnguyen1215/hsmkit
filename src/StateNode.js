@@ -47,6 +47,37 @@ class StateNode {
     this.states = this.parseStates(config.states || {});
     /** @type {Object<string, StateEvent>} */
     this.on = this.parseEvents(config.on || {});
+
+    this.validateEntry();
+    this.validateExit();
+  }
+
+  /**
+   * @private
+   * Validates the entry actions of the state making sure that
+   * they are valid.
+   **/
+  validateEntry() {
+    for (const entry of this.entry) {
+      assert(
+        this.machine.setup.actions[entry],
+        `Entry action not found: ${entry}`
+      );
+    }
+  }
+
+  /**
+   * @private
+   * Validates the exit actions of the state making sure that
+   * they are valid.
+   **/
+  validateExit() {
+    for (const exit of this.exit) {
+      assert(
+        this.machine.setup.actions[exit],
+        `Exit action not found: ${exit}`
+      );
+    }
   }
 
   /**
