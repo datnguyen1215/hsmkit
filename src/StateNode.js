@@ -24,20 +24,17 @@ class StateNode {
     /** @type {StateNode} */
     this.parent = parent;
     /** @type {string} */
-    this.name = config.id
-      ? config.id
-      : parent
-        ? `${parent.name}.${name}`
-        : name;
+    this.name = parent ? `${parent.name}.${name}` : name;
 
     /** @type {string} */
-    this.id = config.id;
+    this.id = config.id
+      ? config.id
+      : parent?.id
+        ? `${parent.id}.${name}`
+        : null;
+
     /** @type {string} */
     this.initial = config.initial;
-    /** @type {Object<string, StateNode>} */
-    this.states = this.parseStates(config.states || {});
-    /** @type {Object<string, StateEvent>} */
-    this.on = this.parseEvents(config.on || {});
     /** @type {string[]} */
     this.entry = config.entry || [];
     /** @type {string[]} */
@@ -45,6 +42,11 @@ class StateNode {
 
     this.machine.states[this.name] = this;
     if (this.id) this.machine.states[this.id] = this;
+
+    /** @type {Object<string, StateNode>} */
+    this.states = this.parseStates(config.states || {});
+    /** @type {Object<string, StateEvent>} */
+    this.on = this.parseEvents(config.on || {});
   }
 
   /**
@@ -101,6 +103,19 @@ class StateNode {
     }
 
     return stateEvent.execute(data);
+  }
+
+  /**
+   * @param {string} statename - The name of the state
+   * @returns {StateNode}
+   */
+  getNextState(statename) {
+    const next =
+      this.parent?.states[statename] ||
+      this.machine.states[statename] ||
+      this.states[statename];
+
+    return next;
   }
 }
 
