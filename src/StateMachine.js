@@ -1,6 +1,7 @@
 import StateNode from './StateNode';
 import assert from './utils/assert';
 import merge from './utils/merge';
+import flatten from './utils/flatten';
 
 class StateMachine {
   /**
@@ -79,7 +80,7 @@ class StateMachine {
 
     if (!result) return { actions: [], entry: [], exit: [] };
 
-    const { actions, target } = result;
+    const { actions = [], target } = result;
 
     if (!target) return { actions };
 
@@ -148,8 +149,8 @@ class StateMachine {
       [next, ...nextAncestors]
     );
 
-    const exitResults = exit.map(x => this.exit(x, event));
-    const entryResults = entry.map(x => this.entry(x, event));
+    const exitResults = flatten(exit.map(x => this.exit(x, event)));
+    const entryResults = flatten(entry.map(x => this.entry(x, event)));
 
     this.state = next;
 

@@ -75,7 +75,9 @@ class StateEvent {
       // are true, the first one will be executed
       const guard = this.machine.setup.guards[node.cond];
 
-      if (!guard()) continue;
+      if (guard && !guard()) continue;
+
+      if (!node.actions) return { target: node.target };
 
       const results = node.actions.map(action => {
         const fn = this.machine.setup.actions[action];
