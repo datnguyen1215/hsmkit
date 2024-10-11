@@ -1,17 +1,10 @@
-/**
- * @typedef {object} EventNode
- * @property {string} target - The target state
- * @property {string[]} actions - The actions to execute
- * @property {string} cond - The condition
- */
-
 import assert from './utils/assert';
 
 class StateEvent {
   /**
    * @param {object} opts
    * @param {StateNode} opts.state - The state node.
-   * @param {string | EventNode | EventNode[]} opts.config - The configuration of the event.
+   * @param {string | hsm.EventNode | hsm.EventNode[]} opts.config - The configuration of the event.
    * @param {string} opts.name - The name of the event.
    */
   constructor({ state, config, name }) {
@@ -35,8 +28,8 @@ class StateEvent {
   }
 
   /**
-   * @param {string | EventNode | EventNode[]} config
-   * @returns {EventNode[]}
+   * @param {string | hsm.EventNode | hsm.EventNode[]} config
+   * @returns {hsm.EventNode[]}
    */
   normalizeConfig(config) {
     switch (typeof config) {
@@ -54,7 +47,7 @@ class StateEvent {
   /**
    * Execute the event.
    * @param {object} data
-   * @returns {any[]}
+   * @returns {ExecuteResult}
    */
   execute(data) {
     for (const node of this.config) {

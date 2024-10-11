@@ -1,29 +1,3 @@
-/**
- * @typedef {object} Event
- * @property {string} type - The type of the event
- * @property {object} [data] - The data of the event
- */
-
-/**
- * @callback ActionFunction
- * @param {object} [context={}] - The context of the state machine
- * @param {Event} event - The event of the state machine
- * @returns {any | Promise<any>}
- */
-
-/**
- * @typedef {object} StateMachineSetup
- * @property {Object<string, ActionFunction>} [actions] - The actions of the state machine
- * @property {Object<string, function(any, Event) : boolean>} [guards] - The guards of the state machine
- */
-
-/**
- * @typedef {object} DispatchResult
- * @property {any[]} actions - The actions to execute
- * @property {any[]} entry - The entry actions to execute
- * @property {any[]} exit - The exit actions to execute
- */
-
 import StateNode from './StateNode';
 import assert from './utils/assert';
 import merge from './utils/merge';
@@ -31,8 +5,8 @@ import merge from './utils/merge';
 class StateMachine {
   /**
    * @param {object} opts
-   * @param {StateConfig} opts.config - The configuration of the state machine
-   * @param {StateMachineSetup} opts.setup - The setup of the state machine
+   * @param {hsm.StateConfig} opts.config - The configuration of the state machine
+   * @param {hsm.StateMachineSetup} opts.setup - The setup of the state machine
    */
   constructor({ config, setup }) {
     setup = merge({}, { actions: {}, guards: {} }, setup);
@@ -48,29 +22,133 @@ class StateMachine {
       'setup.guards is required'
     );
 
+    /** @type {StateNode} */
     this.state = null;
-    /** @private */
+
+    /**
+     * @private
+     * Used to store the state nodes of the state machine.
+     * */
     this.states = {};
 
+    /** @type {hsm.StateConfig} */
     this.config = config;
+
+    /** @type {hsm.StateMachineSetup} */
     this.setup = setup;
-    this.root = new StateNode({ machine: this, name: '(root)', config });
+
+    this.root = new StateNode({
+      machine: this,
+      name: '(root)',
+      config
+    });
   }
 
   /**
    * @param {string} eventName - The name of the event
-   * @param {object} data - The data of the event
-   * @return {DispatchResult}
+   * @param {any} data - The data of the event
+   * @return {hsm.DispatchResult}
    */
-  dispatch(eventName, data = {}) {
-    const ev = { type: eventName, data };
-    this.state.dispatch(ev);
+  dispatch(eventName, data) {
+    const event = { type: eventName, data };
+
+    const result = this.state.dispatch(event);
+
+    if (!result) return { actions: [], entry: [], exit: [] };
+
+    const { actions, target } = result;
+
+    if (!target) return { actions };
+
+    const { entry, exit } = this.transition(target, event);
+    return { actions, entry, exit };
   }
 
   /**
    * @param {string} stateName - The name of the state
+   * @param {hsm.Event} event - The event object
    */
-  transition(stateName) {}
+  transition(stateName, event) {
+    assert(stateName, 'stateName is required');
+
+    const next = this.state.parent?.states[stateName] || this.states[stateName];
+    assert(next, `state not found: ${stateName}`);
+
+    const ancestors = state => {
+      const results = [];
+      while (state.parent) {
+        results.push(state.parent);
+        state = state.parent;
+      }
+      return results;
+    };
+
+    const currentAncestors = ancestors(this.state);
+    const nextAncestors = ancestors(next);
+
+    const getEntryExit = (curAncestors, nextAncestors) => {
+      const exit = [];
+      for (const current of curAncestors) {
+        const entry = [];
+        for (const next of nextAncestors) {
+          if (current === next) return { entry, exit };
+
+          entry.push(next);
+        }
+        exit.push(current);
+      }
+    };
+
+    const { entry, exit } = getEntryExit(currentAncestors, nextAncestors);
+
+    const exitActions = exit.reduce((acc, state) => {
+      return acc.concat(this.exit(state, event));
+    });
+
+    const entryActions = entry.reduce((acc, state) => {
+      return acc.concat(this.entry(state, event));
+    });
+
+    this.state = next;
+
+    return { entry: entryActions, exit: exitActions };
+  }
+
+  /**
+   * @private
+   * @param {StateNode} state - The state node
+   * @param {hsm.Event} event - The event object
+   */
+  exit(state, event) {
+    const actions = state.exit.map(action => {
+      const fn = this.setup.actions[action];
+      return {
+        state: this.state.name,
+        action,
+        output: fn(this.context, event)
+      };
+    });
+
+    return actions;
+  }
+
+  /**
+   * @private
+   * @param {StateNode} state - The state node
+   * @param {hsm.Event} event - The event object
+   */
+  entry(state, event) {
+    const actions = state.entry.map(action => {
+      const fn = this.setup.actions[action];
+      return {
+        state: this.state.name,
+        action,
+        output: fn(this.context, event)
+      };
+    });
+
+    return actions;
+  }
 }
 
 export default StateMachine;

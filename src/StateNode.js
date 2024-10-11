@@ -19,20 +19,37 @@ class StateNode {
     const { machine, name, parent, config } = opts;
     assert(machine, 'machine is required');
 
+    /** @type {StateMachine} */
     this.machine = machine;
+    /** @type {StateNode} */
     this.parent = parent;
-    this.name = name;
+    /** @type {string} */
+    this.name = config.id
+      ? config.id
+      : parent
+        ? `${parent.name}.${name}`
+        : name;
+
+    /** @type {string} */
     this.id = config.id;
+    /** @type {string} */
     this.initial = config.initial;
+    /** @type {Object<string, StateNode>} */
     this.states = this.parseStates(config.states || {});
+    /** @type {Object<string, StateEvent>} */
     this.on = this.parseEvents(config.on || {});
+    /** @type {string[]} */
     this.entry = config.entry || [];
+    /** @type {string[]} */
     this.exit = config.exit || [];
+
+    this.machine.states[this.name] = this;
+    if (this.id) this.machine.states[this.id] = this;
   }
 
   /**
    * @param {Object<string, StateConfig>} states
-   * @returns {object<string, State>}
+   * @returns {Object<string, State>}
    */
   parseStates(states) {
     return Object.entries(states).reduce((acc, [key, value]) => {
@@ -43,16 +60,13 @@ class StateNode {
         config: value
       });
 
-      if (this.id) this.machine.states[this.id] = acc[key];
-      this.machine.states[this.name] = acc[key];
-
       return acc;
     }, {});
   }
 
   /**
-   * @param {Object<string, EventConfig>} events
-   * @returns {object<string, EventConfig>}
+   * @param {Object<string, hsm.EventConfig>} events
+   * @returns {Object<string, hsm.EventNode>}
    */
   parseEvents(events) {
     return Object.entries(events).reduce((acc, [key, value]) => {
@@ -66,9 +80,28 @@ class StateNode {
     }, {});
   }
 
-  // dispatch(event) {
-  //   return this.machine.dispatch(eventName, data);
-  // }
+  /**
+   * Dispatch an event to the state. If the state doesn't handle the event,
+   * it'll be dispatched to the parent state.
+   * @param {hsm.Event} event
+   * @returns {hsm.ExecuteResult | null}
+   */
+  dispatch(event) {
+    assert(event, `event is required`);
+    assert(event.type, `event.type is required`);
+
+    const { type, data } = event;
+
+    const stateEvent = this.on[type];
+
+    if (!stateEvent) {
+      if (!this.parent) return null;
+
+      return this.parent.dispatch(event);
+    }
+
+    return stateEvent.execute(data);
+  }
 }
 
 export default StateNode;
