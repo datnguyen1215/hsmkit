@@ -67,7 +67,7 @@ class StateEvent {
   /**
    * Execute the event.
    * @param {object} data
-   * @returns {ExecuteResult}
+   * @returns {hsm.ExecuteResult}
    */
   execute(data) {
     for (const node of this.config) {
@@ -82,8 +82,9 @@ class StateEvent {
       const results = node.actions.map(action => {
         const fn = this.machine.setup.actions[action];
         return {
+          state: this.state.name,
           output: fn(this.context, { type: this.name, data }),
-          name: action
+          action
         };
       });
 

@@ -28,6 +28,7 @@ class StateMachine {
 
     /**
      * @private
+     * @type {Object<string, StateNode>}
      * Used to store the state nodes of the state machine.
      * */
     this.states = {};
@@ -38,6 +39,7 @@ class StateMachine {
     /** @type {hsm.StateMachineSetup} */
     this.setup = setup;
 
+    /** @type {StateNode} */
     this.root = new StateNode({
       machine: this,
       name: '(root)',
@@ -47,6 +49,45 @@ class StateMachine {
     this.validateEvents();
 
     this.transition(this.root.name, { type: '(machine).init' });
+  }
+
+  /**
+   * @preserve
+   * @param {string} eventName - The name of the event
+   * @param {any} data - The data of the event
+   * @return {hsm.DispatchResult}
+   */
+  dispatch(eventName, data) {
+    const event = { type: eventName, data };
+
+    const result = this.state.dispatch(event);
+
+    if (!result) return { actions: [], entry: [], exit: [] };
+
+    const { actions = [], target } = result;
+
+    if (!target) return { actions };
+
+    const { entry, exit } = this.transition(target, event);
+    return { actions, entry, exit };
+  }
+
+  /**
+   * @preserve
+   * Starting the state machine.
+   * @return {hsm.DispatchResult}
+   **/
+  start() {
+    return this.transition(this.root.name, { type: '(machine).start' });
+  }
+
+  /**
+   * @preserve
+   * Stopping the state machine.
+   * @return {void}
+   **/
+  stop() {
+    this.state = null;
   }
 
   /**
@@ -69,28 +110,10 @@ class StateMachine {
   }
 
   /**
-   * @param {string} eventName - The name of the event
-   * @param {any} data - The data of the event
-   * @return {hsm.DispatchResult}
-   */
-  dispatch(eventName, data) {
-    const event = { type: eventName, data };
-
-    const result = this.state.dispatch(event);
-
-    if (!result) return { actions: [], entry: [], exit: [] };
-
-    const { actions = [], target } = result;
-
-    if (!target) return { actions };
-
-    const { entry, exit } = this.transition(target, event);
-    return { actions, entry, exit };
-  }
-
-  /**
+   * @private
    * @param {string} stateName - The name of the state
    * @param {hsm.Event} event - The event object
+   * @returns {{ entry: hsm.ActionResult[], exit: hsm.ActionResult[] }}
    */
   transition(stateName, event) {
     assert(stateName, 'stateName is required');
@@ -119,9 +142,6 @@ class StateMachine {
       return results;
     };
 
-    const currentAncestors = ancestors(this.state);
-    const nextAncestors = ancestors(next);
-
     /**
      * @private
      * @param {StateNode[]} curAncestors - The current ancestors
@@ -144,6 +164,9 @@ class StateMachine {
       return { entry: [], exit: [] };
     };
 
+    const currentAncestors = ancestors(this.state);
+    const nextAncestors = ancestors(next);
+
     const { entry, exit } = getEntryExit(
       this.state ? [this.state, ...currentAncestors] : currentAncestors,
       [next, ...nextAncestors]
@@ -161,6 +184,7 @@ class StateMachine {
    * @private
    * @param {StateNode} state - The state node
    * @param {hsm.Event} event - The event object
+   * @returns {hsm.ActionResult[]}
    */
   exit(state, event) {
     const actions = state.exit.map(action => {
@@ -179,6 +203,7 @@ class StateMachine {
    * @private
    * @param {StateNode} state - The state node
    * @param {hsm.Event} event - The event object
+   * @returns {hsm.ActionResult[]}
    */
   entry(state, event) {
     const actions = state.entry.map(action => {

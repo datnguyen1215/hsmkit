@@ -31,9 +31,9 @@
 
 /**
  * @typedef {object} hsm.DispatchResult
- * @property {any[]} actions
- * @property {any[]} entry
- * @property {any[]} exit
+ * @property {hsm.ActionResult[]} [actions]
+ * @property {hsm.ActionResult[]} [entry]
+ * @property {hsm.ActionResult[]} [exit]
  */
 
 /**
@@ -42,13 +42,20 @@
 
 /**
  * @typedef {object} hsm.EventNode
- * @property {string} target - The target state
- * @property {string[]} actions - The actions to execute
- * @property {string} cond - The condition
+ * @property {string} [target] - The target state
+ * @property {string[]} [actions] - The actions to execute
+ * @property {string} [cond] - The condition
  */
 
 /**
  * @typedef {object} hsm.ExecuteResult
- * @property {string} target
- * @property {any[]} actions
+ * @property {string} [target]
+ * @property {hsm.ActionResult[]} [actions]
+ */
+
+/**
+ * @typedef {object} hsm.ActionResult
+ * @property {string} state - Name of the state
+ * @property {string} action - Name of the action
+ * @property {any} [output] - Output of the action
  */
