@@ -78,7 +78,7 @@ describe('hsm tests', () => {
             states.notifyConnected = true;
           },
           connectWebSocket: (_, event) => {
-            return new Promise(async (resolve, reject) => {
+            return new Promise(async resolve => {
               states.connectWebSocket = true;
               console.log('connectWebSocket', event);
 
@@ -162,7 +162,7 @@ describe('hsm tests', () => {
     expect(machine.state.name).to.equal('(root).disconnecting');
   });
 
-  it('dispatching DISCONNECT_SUCCESS event should transition to disconnected state', async () => {
+  it('dispatching DISCONNECT_SUCCESS event should transition to (root).disconnected state', async () => {
     const { expect } = await chai;
     const result = machine.dispatch('DISCONNECT_SUCCESS');
     expect(result).to.be.an('object');
