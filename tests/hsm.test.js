@@ -9,6 +9,9 @@ const config = {
     disconnected: {
       entry: ['notifyDisconnected'],
       on: {
+        '*': {
+          actions: ['notifyDisconnected']
+        },
         CONNECT: 'connecting'
       }
     },
@@ -127,6 +130,17 @@ describe('hsm tests', () => {
     expect(machine.root.states).to.have.property('connecting');
     expect(machine.root.states).to.have.property('connected');
     expect(machine.root.states).to.have.property('disconnecting');
+  });
+
+  it('wildcard event should work properly', async () => {
+    const { expect } = await chai;
+    const result = machine.dispatch('UNKNOWN_EVENT');
+    expect(result).to.be.an('object');
+    expect(result).to.have.property('actions');
+    expect(result.actions).to.be.an('array');
+    expect(result.actions.length).to.equal(1);
+    expect(result.actions[0].name).to.equal('notifyDisconnected');
+    expect(states.notifyDisconnected).to.be.true;
   });
 
   it('dispatching CONNECT event should allow awaiting for Promise', async () => {

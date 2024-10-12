@@ -125,7 +125,7 @@ class StateNode {
 
     const { type, data } = event;
 
-    const stateEvent = this.on[type];
+    const stateEvent = this.on[type] || this.on['*'];
 
     if (!stateEvent) {
       if (!this.parent) return null;
