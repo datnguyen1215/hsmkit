@@ -2,73 +2,6 @@ import assign from '../src/assign';
 import hsm, { StateMachine } from '../src/hsm';
 const chai = import('chai');
 
-const config = {
-  id: 'websocket',
-  initial: 'disconnected',
-  context: { socket: null, keepalive: false, keepaliveTimeout: 0 },
-  states: {
-    disconnected: {
-      entry: [assign({ socket: null }), 'notifyDisconnected'],
-      on: {
-        '*': {
-          actions: ['notifyDisconnected']
-        },
-        CONNECT: 'connecting'
-      }
-    },
-    connecting: {
-      entry: ['connectWebSocket'],
-      on: {
-        CONNECT_SUCCESS: 'connected',
-        CONNECT_FAILURE: 'disconnected',
-        STOP: 'disconnected'
-      }
-    },
-    connected: {
-      initial: 'idle',
-      entry: [assign({ socket: {} }), 'notifyConnected'],
-      on: {
-        SET_KEEPALIVE: {
-          actions: [assign({ keepalive: (_, event) => event.data.keepalive })]
-        },
-        SET_KEEPALIVE_TIMEOUT: {
-          actions: [
-            assign({
-              keepaliveTimeout: (_, event) => event.data.keepaliveTimeout
-            })
-          ]
-        },
-
-        RESET_KEEPALIVE: {
-          actions: [assign({ keepalive: false, keepaliveTimeout: 0 })]
-        },
-        DISCONNECT: 'disconnecting',
-        ERROR: 'disconnected'
-      },
-      states: {
-        idle: {
-          on: {
-            SEND_MESSAGE: 'sending',
-            DISCONNECT: 'websocket.disconnecting'
-          }
-        },
-        sending: {
-          entry: ['sendMessage'],
-          on: {
-            MESSAGE_SENT: 'idle'
-          }
-        }
-      }
-    },
-    disconnecting: {
-      entry: ['disconnectWebSocket'],
-      on: {
-        DISCONNECT_SUCCESS: 'disconnected'
-      }
-    }
-  }
-};
-
 describe('hsm tests', () => {
   /** @type {StateMachine} */
   let machine = null;
@@ -79,7 +12,84 @@ describe('hsm tests', () => {
     connectWebSocket: false,
     disconnectWebSocket: false,
     notifyConnected: false,
-    sendMessage: false
+    sendMessage: false,
+    functionAction: false
+  };
+
+  const config = {
+    id: 'websocket',
+    initial: 'disconnected',
+    context: { socket: null, keepalive: false, keepaliveTimeout: 0 },
+    states: {
+      disconnected: {
+        entry: [assign({ socket: null }), 'notifyDisconnected'],
+        on: {
+          '*': {
+            actions: ['notifyDisconnected']
+          },
+          CONNECT: 'connecting',
+          TEST_FUNCTION_ACTION: {
+            actions: [
+              (_, event) => {
+                states.functionAction = true;
+                return event.data;
+              }
+            ]
+          }
+        }
+      },
+      connecting: {
+        entry: ['connectWebSocket'],
+        on: {
+          CONNECT_SUCCESS: 'connected',
+          CONNECT_FAILURE: 'disconnected',
+          STOP: 'disconnected'
+        }
+      },
+      connected: {
+        initial: 'idle',
+        entry: [assign({ socket: {} }), 'notifyConnected'],
+        on: {
+          SET_KEEPALIVE: {
+            actions: [assign({ keepalive: (_, event) => event.data.keepalive })]
+          },
+
+          SET_KEEPALIVE_TIMEOUT: {
+            actions: [
+              assign({
+                keepaliveTimeout: (_, event) => event.data.keepaliveTimeout
+              })
+            ]
+          },
+
+          RESET_KEEPALIVE: {
+            actions: [assign({ keepalive: false, keepaliveTimeout: 0 })]
+          },
+          DISCONNECT: 'disconnecting',
+          ERROR: 'disconnected'
+        },
+        states: {
+          idle: {
+            on: {
+              SEND_MESSAGE: 'sending',
+              DISCONNECT: 'websocket.disconnecting'
+            }
+          },
+          sending: {
+            entry: ['sendMessage'],
+            on: {
+              MESSAGE_SENT: 'idle'
+            }
+          }
+        }
+      },
+      disconnecting: {
+        entry: ['disconnectWebSocket'],
+        on: {
+          DISCONNECT_SUCCESS: 'disconnected'
+        }
+      }
+    }
   };
 
   it('should create with no exceptions', async () => {
@@ -274,5 +284,15 @@ describe('hsm tests', () => {
     const { expect } = await chai;
     expect(machine.context).to.be.an('object');
     expect(machine.context).to.have.property('socket', null);
+  });
+
+  it('TEST_ACTION_FUNCTION should be excuted properly', async () => {
+    const { expect } = await chai;
+    const result = machine.dispatch('TEST_FUNCTION_ACTION', 'test data');
+    expect(result).to.be.an('object');
+    expect(states.functionAction).to.be.true;
+    expect(result.actions).to.be.an('array');
+    expect(result.actions.length).to.equal(1);
+    expect(result.actions[0].output).to.equal('test data');
   });
 });
