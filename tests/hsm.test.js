@@ -74,17 +74,14 @@ describe('hsm tests', () => {
       setup: {
         actions: {
           notifyDisconnected: () => {
-            console.log('notifyDisconnected');
             states.notifyDisconnected = true;
           },
           notifyConnected: () => {
-            console.log('notifyConnected');
             states.notifyConnected = true;
           },
           connectWebSocket: (_, event) => {
             return new Promise(async resolve => {
               states.connectWebSocket = true;
-              console.log('connectWebSocket', event);
 
               // wait for 2 seconds
               await new Promise(resolve => setTimeout(resolve, 1000));
@@ -99,7 +96,6 @@ describe('hsm tests', () => {
           sendMessage: (_, event) => {
             states.sendMessage = true;
             setTimeout(() => {
-              console.log('sendMessage', event.data);
               machine.dispatch('MESSAGE_SENT');
             }, 2000);
           }
@@ -107,13 +103,6 @@ describe('hsm tests', () => {
       }
     });
     expect(machine).to.be.an('object');
-
-    machine.on('event', event => {
-      console.log('event', event);
-    });
-    machine.on('transition', (next, prev) => {
-      console.log(`transition: ${prev?.name} -> ${next.name}`);
-    });
   });
 
   it('machine should have a root state', async () => {
@@ -155,6 +144,24 @@ describe('hsm tests', () => {
     expect(states.notifyDisconnected).to.be.true;
   });
 
+  it(`should emit 'event' when there's a new event triggered`, done => {
+    (async () => {
+      const { expect } = await chai;
+
+      const event = { type: 'EVENT_EMITTER_TEST' };
+
+      const onEvent = e => {
+        machine.off('event', onEvent);
+        expect(e).to.be.an('object');
+        expect(e).to.have.property('type', 'EVENT_EMITTER_TEST');
+        done();
+      };
+
+      machine.on('event', onEvent);
+      machine.dispatch(event.type);
+    })();
+  });
+
   it('dispatching CONNECT event should allow awaiting for Promise', async () => {
     const { expect } = await chai;
     const result = machine.dispatch('CONNECT', {
@@ -188,13 +195,28 @@ describe('hsm tests', () => {
     expect(machine.state.name).to.equal('(root).disconnecting');
   });
 
-  it('dispatching DISCONNECT_SUCCESS event should transition to (root).disconnected state', async () => {
-    const { expect } = await chai;
-    const result = machine.dispatch('DISCONNECT_SUCCESS');
-    expect(result).to.be.an('object');
-    expect(result).to.have.property('actions');
-    expect(result.actions).to.be.an('array');
-    expect(result.actions.length).to.equal(0);
-    expect(machine.state.name).to.equal('(root).disconnected');
+  it(`should emit 'transition' when there's a transition`, done => {
+    (async () => {
+      const { expect } = await chai;
+      const event = { type: 'DISCONNECT_SUCCESS' };
+
+      const onTransition = (next, prev) => {
+        machine.off('transition', onTransition);
+        expect(next).to.be.an('object');
+        expect(next).to.have.property('name', '(root).disconnected');
+        expect(prev).to.be.an('object');
+        expect(prev).to.have.property('name', '(root).disconnecting');
+        done();
+      };
+
+      machine.on('transition', onTransition);
+
+      const result = machine.dispatch(event.type);
+      expect(result).to.be.an('object');
+      expect(result).to.have.property('actions');
+      expect(result.actions).to.be.an('array');
+      expect(result.actions.length).to.equal(0);
+      expect(machine.state.name).to.equal('(root).disconnected');
+    })();
   });
 });
