@@ -139,7 +139,7 @@ describe('hsm tests', () => {
     expect(result).to.have.property('actions');
     expect(result.actions).to.be.an('array');
     expect(result.actions.length).to.equal(1);
-    expect(result.actions[0].name).to.equal('notifyDisconnected');
+    expect(result.actions[0].action).to.equal('notifyDisconnected');
     expect(states.notifyDisconnected).to.be.true;
   });
 

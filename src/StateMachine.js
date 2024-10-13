@@ -17,6 +17,8 @@ class StateMachine extends events.Emitter {
    * @param {hsm.StateMachineSetup} opts.setup - The setup of the state machine
    */
   constructor({ config, setup }) {
+    super();
+
     setup = merge({}, { actions: {}, guards: {} }, setup);
 
     assert(config, 'config is required');
@@ -56,8 +58,6 @@ class StateMachine extends events.Emitter {
     this.validateEvents();
 
     this.transition(this.root.name, { type: '(machine).init' });
-
-    Object.assign(this, events.emitter());
   }
 
   /**
