@@ -2,9 +2,16 @@ import StateNode from './StateNode';
 import assert from './utils/assert';
 import merge from './utils/merge';
 import flatten from './utils/flatten';
+import events from './utils/events';
 
-class StateMachine {
+/**
+ * @preseve
+ * @class StateMachine
+ * @extends events.Emitter<'transition' | 'event'>
+ */
+class StateMachine extends events.Emitter {
   /**
+   * @preserve
    * @param {object} opts
    * @param {hsm.StateConfig} opts.config - The configuration of the state machine
    * @param {hsm.StateMachineSetup} opts.setup - The setup of the state machine
@@ -49,6 +56,8 @@ class StateMachine {
     this.validateEvents();
 
     this.transition(this.root.name, { type: '(machine).init' });
+
+    Object.assign(this, events.emitter());
   }
 
   /**

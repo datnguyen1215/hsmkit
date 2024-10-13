@@ -1,7 +1,6 @@
 /** @namespace events */
 
 /**
- * @template {events.EventListener} T
  * @callback events.EventListener
  * @param {...*} args
  * @returns {...*}
