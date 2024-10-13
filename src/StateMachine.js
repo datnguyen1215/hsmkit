@@ -4,6 +4,8 @@ import merge from './utils/merge';
 import flatten from './utils/flatten';
 import events from './utils/events';
 
+const DEFAULT_SETUP = { actions: {}, guards: {} };
+
 /**
  * @preseve
  * @class StateMachine
@@ -22,15 +24,6 @@ class StateMachine extends events.Emitter {
     setup = merge({}, { actions: {}, guards: {} }, setup);
 
     assert(config, 'config is required');
-    assert(setup, 'setup is required');
-    assert(
-      setup.actions && typeof setup.actions === 'object',
-      'setup.actions is required'
-    );
-    assert(
-      setup.guards && typeof setup.guards === 'object',
-      'setup.guards is required'
-    );
 
     /** @type {StateNode} */
     this.state = null;
@@ -48,7 +41,7 @@ class StateMachine extends events.Emitter {
     this.context = this.config.context || {};
 
     /** @type {hsm.StateMachineSetup} */
-    this.setup = setup;
+    this.setup = merge({}, DEFAULT_SETUP, setup);
 
     /** @type {StateNode} */
     this.root = new StateNode({
@@ -62,6 +55,7 @@ class StateMachine extends events.Emitter {
 
   /**
    * @preserve
+   * Dispatch an event to the state machine.
    * @param {string} eventName - The name of the event
    * @param {any} data - The data of the event
    * @return {hsm.DispatchResult}

@@ -92,6 +92,40 @@ describe('hsm tests', () => {
     }
   };
 
+  it('should create state machine without any setups', async () => {
+    const { expect } = await chai;
+    const m = hsm.create({
+      config: {
+        id: 'test',
+        initial: 'idle',
+        states: {
+          idle: {
+            on: {
+              TEST: 'test'
+            }
+          },
+          test: {}
+        }
+      }
+    });
+
+    expect(m).to.be.an('object');
+    expect(m).to.have.property('start');
+    expect(m).to.have.property('stop');
+    expect(m).to.have.property('dispatch');
+    expect(m).to.have.property('on');
+    expect(m).to.have.property('off');
+    expect(m).to.have.property('emit');
+    expect(m).to.have.property('context');
+    expect(m).to.have.property('state');
+    expect(m).to.have.property('root');
+    expect(m).to.have.property('states');
+    expect(m).to.have.property('setup');
+    expect(m.setup).to.have.property('actions');
+    expect(m.setup).to.have.property('guards');
+    expect(m).to.have.property('config');
+  });
+
   it('should create with no exceptions', async () => {
     const { expect } = await chai;
     machine = hsm.create({
