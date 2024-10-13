@@ -1,13 +1,14 @@
+import assign from '../src/assign';
 import hsm, { StateMachine } from '../src/hsm';
 const chai = import('chai');
 
 const config = {
   id: 'websocket',
   initial: 'disconnected',
-  context: { socket: null },
+  context: { socket: null, keepalive: false, keepaliveTimeout: 0 },
   states: {
     disconnected: {
-      entry: ['notifyDisconnected'],
+      entry: [assign({ socket: null }), 'notifyDisconnected'],
       on: {
         '*': {
           actions: ['notifyDisconnected']
@@ -25,8 +26,22 @@ const config = {
     },
     connected: {
       initial: 'idle',
-      entry: ['notifyConnected'],
+      entry: [assign({ socket: {} }), 'notifyConnected'],
       on: {
+        SET_KEEPALIVE: {
+          actions: [assign({ keepalive: (_, event) => event.data.keepalive })]
+        },
+        SET_KEEPALIVE_TIMEOUT: {
+          actions: [
+            assign({
+              keepaliveTimeout: (_, event) => event.data.keepaliveTimeout
+            })
+          ]
+        },
+
+        RESET_KEEPALIVE: {
+          actions: [assign({ keepalive: false, keepaliveTimeout: 0 })]
+        },
         DISCONNECT: 'disconnecting',
         ERROR: 'disconnected'
       },
@@ -183,6 +198,41 @@ describe('hsm tests', () => {
     expect(machine.state?.name).to.equal('(root).connected.idle');
   });
 
+  it('context.socket should be an empty object', async () => {
+    const { expect } = await chai;
+    expect(machine.context).to.be.an('object');
+    expect(machine.context).to.have.property('socket');
+    expect(machine.context.socket).to.be.an('object');
+  });
+
+  it('should set keepalive to true', async () => {
+    const { expect } = await chai;
+    expect(machine.context.keepalive).to.be.false;
+    const result = machine.dispatch('SET_KEEPALIVE', { keepalive: true });
+    expect(result).to.be.an('object');
+    expect(machine.context.keepalive).to.be.true;
+  });
+
+  it('should set keepaliveTimeout to 1000', async () => {
+    const { expect } = await chai;
+    expect(machine.context.keepaliveTimeout).to.equal(0);
+    const result = machine.dispatch('SET_KEEPALIVE_TIMEOUT', {
+      keepaliveTimeout: 1000
+    });
+    expect(result).to.be.an('object');
+    expect(machine.context.keepaliveTimeout).to.equal(1000);
+  });
+
+  it('should set both keepalive and keepaliveTimeout to false and 0', async () => {
+    const { expect } = await chai;
+    expect(machine.context.keepalive).to.be.true;
+    expect(machine.context.keepaliveTimeout).to.equal(1000);
+    const result = machine.dispatch('RESET_KEEPALIVE');
+    expect(result).to.be.an('object');
+    expect(machine.context.keepalive).to.be.false;
+    expect(machine.context.keepaliveTimeout).to.equal(0);
+  });
+
   it('dispatching DISCONNECT event should transition to (root).disconnecting state', async () => {
     const { expect } = await chai;
     const result = machine.dispatch('DISCONNECT');
@@ -218,5 +268,11 @@ describe('hsm tests', () => {
       expect(result.actions.length).to.equal(0);
       expect(machine.state.name).to.equal('(root).disconnected');
     })();
+  });
+
+  it('context.socket should be null', async () => {
+    const { expect } = await chai;
+    expect(machine.context).to.be.an('object');
+    expect(machine.context).to.have.property('socket', null);
   });
 });

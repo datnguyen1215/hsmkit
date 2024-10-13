@@ -27,7 +27,7 @@ class StateEvent {
       const actions = node.actions || [];
       for (const action of actions)
         assert(
-          state.machine.setup.actions[action],
+          state.machine.setup.actions[action] || typeof action === 'function',
           `Invalid action: ${action}`
         );
 
@@ -80,7 +80,7 @@ class StateEvent {
       if (!node.actions) return { target: node.target };
 
       const results = node.actions.map(action => {
-        const fn = this.machine.setup.actions[action];
+        const fn = this.machine.setup.actions[action] || action;
         return {
           state: this.state.name,
           output: fn(this.context, { type: this.name, data }),

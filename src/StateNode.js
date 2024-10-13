@@ -60,7 +60,7 @@ class StateNode {
   validateEntry() {
     for (const entry of this.entry) {
       assert(
-        this.machine.setup.actions[entry],
+        this.machine.setup.actions[entry] || typeof entry === 'function',
         `Entry action not found: ${entry}`
       );
     }
@@ -74,7 +74,7 @@ class StateNode {
   validateExit() {
     for (const exit of this.exit) {
       assert(
-        this.machine.setup.actions[exit],
+        this.machine.setup.actions[exit] || typeof exit === 'function',
         `Exit action not found: ${exit}`
       );
     }

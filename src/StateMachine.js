@@ -45,6 +45,8 @@ class StateMachine extends events.Emitter {
     /** @type {hsm.StateConfig} */
     this.config = config;
 
+    this.context = this.config.context || {};
+
     /** @type {hsm.StateMachineSetup} */
     this.setup = setup;
 
@@ -203,7 +205,7 @@ class StateMachine extends events.Emitter {
    */
   exit(state, event) {
     const actions = state.exit.map(action => {
-      const fn = this.setup.actions[action];
+      const fn = this.setup.actions[action] || action;
       return {
         state: this.state.name,
         action,
@@ -222,7 +224,7 @@ class StateMachine extends events.Emitter {
    */
   entry(state, event) {
     const actions = state.entry.map(action => {
-      const fn = this.setup.actions[action];
+      const fn = this.setup.actions[action] || action;
       return {
         state: this.state.name,
         action,
