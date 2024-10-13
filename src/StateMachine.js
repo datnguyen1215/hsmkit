@@ -56,8 +56,6 @@ class StateMachine extends events.Emitter {
     });
 
     this.validateEvents();
-
-    this.transition(this.root.name, { type: '(machine).init' });
   }
 
   /**
@@ -67,7 +65,11 @@ class StateMachine extends events.Emitter {
    * @return {hsm.DispatchResult}
    */
   dispatch(eventName, data) {
+    assert(this.state, 'machine is not started.');
+
     const event = { type: eventName, data };
+
+    this.emit('event', event);
 
     const result = this.state.dispatch(event);
 
@@ -131,7 +133,9 @@ class StateMachine extends events.Emitter {
     assert(next, `state not found: ${stateName}`);
 
     if (next.initial) {
+      const prev = this.state;
       this.state = next;
+      this.emit('transition', next, prev);
       return this.transition(next.initial, event);
     }
 
@@ -184,7 +188,9 @@ class StateMachine extends events.Emitter {
     const exitResults = flatten(exit.map(x => this.exit(x, event)));
     const entryResults = flatten(entry.map(x => this.entry(x, event)));
 
+    const prev = this.state;
     this.state = next;
+    this.emit('transition', next, prev);
 
     return { entry: entryResults, exit: exitResults };
   }

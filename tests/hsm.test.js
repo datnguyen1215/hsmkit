@@ -1,4 +1,4 @@
-import hsm from '../src/hsm';
+import hsm, { StateMachine } from '../src/hsm';
 const chai = import('chai');
 
 const config = {
@@ -55,6 +55,7 @@ const config = {
 };
 
 describe('hsm tests', () => {
+  /** @type {StateMachine} */
   let machine = null;
 
   // used to keep track whether the actions were called.
@@ -106,10 +107,18 @@ describe('hsm tests', () => {
       }
     });
     expect(machine).to.be.an('object');
+
+    machine.on('event', event => {
+      console.log('event', event);
+    });
+    machine.on('transition', (next, prev) => {
+      console.log(`transition: ${prev?.name} -> ${next.name}`);
+    });
   });
 
   it('machine should have a root state', async () => {
     const { expect } = await chai;
+    machine.start();
     expect(machine.root).to.be.an('object');
     expect(machine.root).to.have.property('name', '(root)');
     expect(machine.root).to.have.property('states');
@@ -121,6 +130,9 @@ describe('hsm tests', () => {
     expect(machine.root).to.have.property('id', 'websocket');
     expect(machine.root).to.have.property('initial', 'disconnected');
     expect(states.notifyDisconnected).to.be.true;
+
+    // reset this state so we can test it again.
+    states.notifyDisconnected = false;
   });
 
   it('root state should have child states like configuration', async () => {
@@ -161,7 +173,7 @@ describe('hsm tests', () => {
 
   it('state should be transitioned to (root).connected.idle', async () => {
     const { expect } = await chai;
-    expect(machine.state.name).to.equal('(root).connected.idle');
+    expect(machine.state?.name).to.equal('(root).connected.idle');
   });
 
   it('dispatching DISCONNECT event should transition to (root).disconnecting state', async () => {
