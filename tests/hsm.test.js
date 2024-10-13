@@ -79,7 +79,7 @@ describe('hsm tests', () => {
           notifyConnected: () => {
             states.notifyConnected = true;
           },
-          connectWebSocket: (_, event) => {
+          connectWebSocket: () => {
             return new Promise(async resolve => {
               states.connectWebSocket = true;
 
@@ -93,7 +93,7 @@ describe('hsm tests', () => {
           disconnectWebSocket: async () => {
             states.disconnectWebSocket = true;
           },
-          sendMessage: (_, event) => {
+          sendMessage: () => {
             states.sendMessage = true;
             setTimeout(() => {
               machine.dispatch('MESSAGE_SENT');
