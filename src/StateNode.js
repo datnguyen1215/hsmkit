@@ -53,9 +53,9 @@ class StateNode {
   }
 
   /**
-   * @private
    * Validates the entry actions of the state making sure that
    * they are valid.
+   * @private
    **/
   validateEntry() {
     for (const entry of this.entry) {
@@ -67,9 +67,9 @@ class StateNode {
   }
 
   /**
-   * @private
    * Validates the exit actions of the state making sure that
    * they are valid.
+   * @private
    **/
   validateExit() {
     for (const exit of this.exit) {
@@ -83,6 +83,7 @@ class StateNode {
   /**
    * @param {Object<string, StateConfig>} states
    * @returns {Object<string, State>}
+   * @private
    */
   parseStates(states) {
     return Object.entries(states).reduce((acc, [key, value]) => {
@@ -100,6 +101,7 @@ class StateNode {
   /**
    * @param {Object<string, hsm.EventConfig>} events
    * @returns {Object<string, hsm.EventNode>}
+   * @private
    */
   parseEvents(events) {
     return Object.entries(events).reduce((acc, [key, value]) => {

@@ -1,9 +1,10 @@
 import assert from './utils/assert';
+import StateNode from './StateNode';
 
 class StateEvent {
   /**
    * @param {object} opts
-   * @param {import('./StateNode').default} opts.state - The state node.
+   * @param {StateNode} opts.state - The state node.
    * @param {string | hsm.EventNode | hsm.EventNode[]} opts.config - The configuration of the event.
    * @param {string} opts.name - The name of the event.
    */

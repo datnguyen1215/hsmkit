@@ -7,13 +7,11 @@ import events from './utils/events';
 const DEFAULT_SETUP = { actions: {}, guards: {} };
 
 /**
- * @preseve
- * @class StateMachine
+ * @class
  * @extends events.Emitter<'transition' | 'event'>
  */
 class StateMachine extends events.Emitter {
   /**
-   * @preserve
    * @param {object} opts
    * @param {hsm.StateConfig} opts.config - The configuration of the state machine
    * @param {hsm.StateMachineSetup} opts.setup - The setup of the state machine
@@ -29,10 +27,9 @@ class StateMachine extends events.Emitter {
     this.state = null;
 
     /**
-     * @private
      * @type {Object<string, StateNode>}
-     * Used to store the state nodes of the state machine.
-     * */
+     * @private
+     **/
     this.states = {};
 
     /** @type {hsm.StateConfig} */
@@ -54,7 +51,6 @@ class StateMachine extends events.Emitter {
   }
 
   /**
-   * @preserve
    * Dispatch an event to the state machine.
    * @param {string} eventName - The name of the event
    * @param {any} data - The data of the event
@@ -80,7 +76,6 @@ class StateMachine extends events.Emitter {
   }
 
   /**
-   * @preserve
    * Starting the state machine.
    * @return {hsm.DispatchResult}
    **/
@@ -89,7 +84,6 @@ class StateMachine extends events.Emitter {
   }
 
   /**
-   * @preserve
    * Stopping the state machine.
    * @return {void}
    **/
@@ -98,9 +92,9 @@ class StateMachine extends events.Emitter {
   }
 
   /**
-   * @private
    * Validates the events of the state machine making sure that
    * the target states are valid.
+   * @private
    **/
   validateEvents() {
     for (const state of Object.values(this.states)) {
@@ -117,10 +111,10 @@ class StateMachine extends events.Emitter {
   }
 
   /**
-   * @private
    * @param {string} stateName - The name of the state
    * @param {hsm.Event} event - The event object
    * @returns {{ entry: hsm.ActionResult[], exit: hsm.ActionResult[] }}
+   * @private
    */
   transition(stateName, event) {
     assert(stateName, 'stateName is required');
@@ -136,9 +130,9 @@ class StateMachine extends events.Emitter {
     }
 
     /**
-     * @private
      * @param {StateNode} state - The state node
      * @returns {StateNode[]}
+     * @private
      **/
     const ancestors = state => {
       if (!state) return [];
@@ -152,10 +146,10 @@ class StateMachine extends events.Emitter {
     };
 
     /**
-     * @private
      * @param {StateNode[]} curAncestors - The current ancestors
      * @param {StateNode[]} nextAncestors - The next ancestors
      * @returns {{ entry: StateNode[], exit: StateNode[] }}
+     * @private
      **/
     const getEntryExit = (curAncestors, nextAncestors) => {
       const entry = [];
@@ -192,10 +186,10 @@ class StateMachine extends events.Emitter {
   }
 
   /**
-   * @private
    * @param {StateNode} state - The state node
    * @param {hsm.Event} event - The event object
    * @returns {hsm.ActionResult[]}
+   * @private
    */
   exit(state, event) {
     const actions = state.exit.map(action => {
@@ -211,10 +205,10 @@ class StateMachine extends events.Emitter {
   }
 
   /**
-   * @private
    * @param {StateNode} state - The state node
    * @param {hsm.Event} event - The event object
    * @returns {hsm.ActionResult[]}
+   * @private
    */
   entry(state, event) {
     const actions = state.entry.map(action => {

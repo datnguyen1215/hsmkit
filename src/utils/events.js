@@ -1,24 +1,32 @@
 /**
- * @preserve
- * @class Emitter
+ * @callback EventListener
+ * @param {...*} args
+ * @returns {...*}
+ */
+
+/**
+ * @callback UnsubscribeListener - Unsubscribe the listener.
+ * @returns {void}
+ */
+
+/**
+ * @class
  * @template TEventEnum
  */
 class Emitter {
   constructor() {
     /**
-     * @preserve
      * @private
-     * @type {Object<TEventEnum, events.EventListener[]>}
+     * @type {Object<TEventEnum, EventListener[]>}
      **/
     this.listeners = {};
   }
 
   /**
-   * @preserve
    * Subscribe to an event.
    * @param {TEventEnum} event - event name
-   * @param {events.EventListener} callback - function to call when the event is emitted
-   * @returns {events.UnsubscribeListener} - unsubscribe the listener
+   * @param {EventListener} callback - function to call when the event is emitted
+   * @returns {UnsubscribeListener} - unsubscribe the listener
    */
   on(event, callback) {
     this.listeners[event] = this.listeners[event] || [];
@@ -27,12 +35,11 @@ class Emitter {
   }
 
   /**
-   * @preserve
    * Subscribe to an event once.
    * @template TEventEnum
    * @param {TEventEnum} event - event name
-   * @param {events.EventListener} callback - function to call when the event is emitted
-   * @returns {events.UnsubscribeListener}
+   * @param {EventListener} callback - function to call when the event is emitted
+   * @returns {UnsubscribeListener}
    */
   once(event, callback) {
     const handler = (...args) => {
@@ -44,11 +51,10 @@ class Emitter {
   }
 
   /**
-   * @preserve
    * Unsubscribe from an event.
    * @template TEventEnum
    * @param {TEventEnum} event - event name
-   * @param {events.EventListener} callback - function to call when the event is emitted
+   * @param {EventListener} callback - function to call when the event is emitted
    * @returns {void}
    */
   off(event, callback) {
@@ -57,7 +63,6 @@ class Emitter {
   }
 
   /**
-   * @preserve
    * Emit an event.
    * @template TEventEnum
    * @param {TEventEnum} event - event name
