@@ -23,8 +23,11 @@ class StateMachine extends events.Emitter {
 
     assert(config, 'config is required');
 
-    /** @type {StateNode} */
-    this.state = null;
+    /**
+     * @type {StateNode}
+     * @private
+     **/
+    this._state = null;
 
     /**
      * @type {Object<string, StateNode>}
@@ -50,6 +53,12 @@ class StateMachine extends events.Emitter {
     this.validateEvents();
   }
 
+  /** @type {StateNode} */
+  get state() {
+    if (!this._state) throw new Error('machine is not started.');
+    return this._state;
+  }
+
   /**
    * Dispatch an event to the state machine.
    * @param {string} eventName - The name of the event
@@ -57,13 +66,13 @@ class StateMachine extends events.Emitter {
    * @return {hsm.DispatchResult}
    */
   dispatch(eventName, data) {
-    assert(this.state, 'machine is not started.');
+    assert(this._state, 'machine is not started.');
 
     const event = { type: eventName, data };
 
     this.emit('event', event);
 
-    const result = this.state.dispatch(event);
+    const result = this._state.dispatch(event);
 
     if (!result) return { actions: [], entry: [], exit: [] };
 
@@ -88,7 +97,7 @@ class StateMachine extends events.Emitter {
    * @return {void}
    **/
   stop() {
-    this.state = null;
+    this._state = null;
   }
 
   /**
@@ -119,12 +128,12 @@ class StateMachine extends events.Emitter {
   transition(stateName, event) {
     assert(stateName, 'stateName is required');
 
-    const next = this.state?.getNextState(stateName) || this.states[stateName];
+    const next = this._state?.getNextState(stateName) || this.states[stateName];
     assert(next, `state not found: ${stateName}`);
 
     if (next.initial) {
-      const prev = this.state;
-      this.state = next;
+      const prev = this._state;
+      this._state = next;
       this.emit('transition', next, prev);
       return this.transition(next.initial, event);
     }
@@ -167,19 +176,19 @@ class StateMachine extends events.Emitter {
       return { entry: [], exit: [] };
     };
 
-    const currentAncestors = ancestors(this.state);
+    const currentAncestors = ancestors(this._state);
     const nextAncestors = ancestors(next);
 
     const { entry, exit } = getEntryExit(
-      this.state ? [this.state, ...currentAncestors] : currentAncestors,
+      this._state ? [this._state, ...currentAncestors] : currentAncestors,
       [next, ...nextAncestors]
     );
 
     const exitResults = flatten(exit.map(x => this.exit(x, event)));
     const entryResults = flatten(entry.map(x => this.entry(x, event)));
 
-    const prev = this.state;
-    this.state = next;
+    const prev = this._state;
+    this._state = next;
     this.emit('transition', next, prev);
 
     return { entry: entryResults, exit: exitResults };
@@ -195,7 +204,7 @@ class StateMachine extends events.Emitter {
     const actions = state.exit.map(action => {
       const fn = this.setup.actions[action] || action;
       return {
-        state: this.state.name,
+        state: this._state.name,
         action,
         output: fn(this.context, event)
       };
@@ -214,7 +223,7 @@ class StateMachine extends events.Emitter {
     const actions = state.entry.map(action => {
       const fn = this.setup.actions[action] || action;
       return {
-        state: this.state.name,
+        state: this._state.name,
         action,
         output: fn(this.context, event)
       };

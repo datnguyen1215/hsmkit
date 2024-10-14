@@ -117,7 +117,6 @@ describe('hsm tests', () => {
     expect(m).to.have.property('off');
     expect(m).to.have.property('emit');
     expect(m).to.have.property('context');
-    expect(m).to.have.property('state');
     expect(m).to.have.property('root');
     expect(m).to.have.property('states');
     expect(m).to.have.property('setup');
