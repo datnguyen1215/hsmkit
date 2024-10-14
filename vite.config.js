@@ -1,6 +1,5 @@
 import { defineConfig } from 'vite';
 import { terser } from 'rollup-plugin-terser';
-import dts from 'vite-plugin-dts';
 
 export default defineConfig({
   build: {
@@ -16,10 +15,5 @@ export default defineConfig({
     },
     sourcemap: false,
     minify: 'terser'
-  },
-  plugins: [
-    dts({
-      outputDir: 'dist/types'
-    })
-  ]
+  }
 });

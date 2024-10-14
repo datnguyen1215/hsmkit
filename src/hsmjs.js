@@ -9,5 +9,5 @@ import assign from './assign';
  */
 const create = options => new StateMachine(options);
 
-export default { create, StateMachine, assign };
-export { create, StateMachine, assign };
+export default { create, assign };
+export { create, assign };

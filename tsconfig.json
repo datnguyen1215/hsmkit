@@ -5,13 +5,12 @@
     "allowJs": true,
     "declaration": true,
     "emitDeclarationOnly": true,
-    "declarationDir": "./dist/types",
-    "outDir": "./dist/types",
+    "outFile": "./dist/hsmjs.d.ts",
     "baseUrl": ".",
     "moduleResolution": "NodeNext",
     "declarationMap": true,
-    "composite": true,
-    "sourceMap": false
+    "sourceMap": false,
+    "rootDir": "./src"
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
