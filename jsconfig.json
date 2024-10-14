@@ -1,6 +1,0 @@
-{
-  "compilerOptions": {
-    "baseUrl": "."
-  },
-  "types": ["./src/**/*.d.ts"]
-}

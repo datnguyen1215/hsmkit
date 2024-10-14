@@ -8,7 +8,7 @@ const DEFAULT_SETUP = { actions: {}, guards: {} };
 
 /**
  * @class
- * @extends events.Emitter<'transition' | 'event'>
+ * @extends {events.Emitter<'transition' | 'event'>}
  */
 class StateMachine extends events.Emitter {
   /**
@@ -35,15 +35,21 @@ class StateMachine extends events.Emitter {
      **/
     this.states = {};
 
-    /** @type {hsmjs.StateConfig} */
+    /**
+     * @type {hsmjs.StateConfig}
+     **/
     this.config = config;
 
     this.context = this.config.context || {};
 
-    /** @type {hsmjs.StateMachineSetup} */
+    /**
+     * @type {hsmjs.StateMachineSetup}
+     **/
     this.setup = merge({}, DEFAULT_SETUP, setup);
 
-    /** @type {StateNode} */
+    /**
+     * @type {StateNode}
+     **/
     this.root = new StateNode({
       machine: this,
       name: '(root)',
@@ -53,7 +59,9 @@ class StateMachine extends events.Emitter {
     this.validateEvents();
   }
 
-  /** @type {StateNode} */
+  /**
+   * @type {StateNode}
+   **/
   get state() {
     if (!this._state) throw new Error('machine is not started.');
     return this._state;

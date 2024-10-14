@@ -1,4 +1,6 @@
 import { defineConfig } from 'vite';
+import { terser } from 'rollup-plugin-terser';
+import dts from 'vite-plugin-dts';
 
 export default defineConfig({
   build: {
@@ -6,10 +8,18 @@ export default defineConfig({
     lib: {
       entry: 'src/hsmjs.js',
       name: 'hsmjs',
-      fileName: () => `hsmjs.js`,
-      formats: ['cjs']
+      fileName: format => `hsmjs.${format}.js`,
+      formats: ['es', 'cjs']
     },
-    sourcemap: true,
-    minify: false
-  }
+    rollupOptions: {
+      plugins: [terser()]
+    },
+    sourcemap: false,
+    minify: 'terser'
+  },
+  plugins: [
+    dts({
+      outputDir: 'dist/types'
+    })
+  ]
 });
