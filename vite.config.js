@@ -4,9 +4,9 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     lib: {
-      entry: 'src/hsm.js',
-      name: 'hsm',
-      fileName: () => `hsm.js`,
+      entry: 'src/hsmjs.js',
+      name: 'hsmjs',
+      fileName: () => `hsmjs.js`,
       formats: ['cjs']
     },
     sourcemap: true,

@@ -5,7 +5,7 @@ class StateEvent {
   /**
    * @param {object} opts
    * @param {StateNode} opts.state - The state node.
-   * @param {string | hsm.EventNode | hsm.EventNode[]} opts.config - The configuration of the event.
+   * @param {string | hsmjs.EventNode | hsmjs.EventNode[]} opts.config - The configuration of the event.
    * @param {string} opts.name - The name of the event.
    */
   constructor({ state, config, name }) {
@@ -49,8 +49,8 @@ class StateEvent {
   }
 
   /**
-   * @param {string | hsm.EventNode | hsm.EventNode[]} config
-   * @returns {hsm.EventNode[]}
+   * @param {string | hsmjs.EventNode | hsmjs.EventNode[]} config
+   * @returns {hsmjs.EventNode[]}
    */
   normalizeConfig(config) {
     switch (typeof config) {
@@ -68,7 +68,7 @@ class StateEvent {
   /**
    * Execute the event.
    * @param {object} data
-   * @returns {hsm.ExecuteResult}
+   * @returns {hsmjs.ExecuteResult}
    */
   execute(data) {
     for (const node of this.config) {

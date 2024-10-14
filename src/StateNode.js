@@ -99,8 +99,8 @@ class StateNode {
   }
 
   /**
-   * @param {Object<string, hsm.EventConfig>} events
-   * @returns {Object<string, hsm.EventNode>}
+   * @param {Object<string, hsmjs.EventConfig>} events
+   * @returns {Object<string, hsmjs.EventNode>}
    * @private
    */
   parseEvents(events) {
@@ -118,8 +118,8 @@ class StateNode {
   /**
    * Dispatch an event to the state. If the state doesn't handle the event,
    * it'll be dispatched to the parent state.
-   * @param {hsm.Event} event
-   * @returns {hsm.ExecuteResult | null}
+   * @param {hsmjs.Event} event
+   * @returns {hsmjs.ExecuteResult | null}
    */
   dispatch(event) {
     assert(event, `event is required`);
