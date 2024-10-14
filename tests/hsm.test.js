@@ -19,7 +19,17 @@ describe('hsm tests', () => {
   const config = {
     id: 'websocket',
     initial: 'disconnected',
-    context: { socket: null, keepalive: false, keepaliveTimeout: 0 },
+    context: {
+      socket: null,
+      keepalive: false,
+      keepaliveTimeout: 0,
+      assign: {
+        testL1: {
+          testL21: 3,
+          testL22: 1
+        }
+      }
+    },
     states: {
       disconnected: {
         entry: [assign({ socket: null }), 'notifyDisconnected'],
@@ -35,6 +45,9 @@ describe('hsm tests', () => {
                 return event.data;
               }
             ]
+          },
+          TEST_ASSIGN_DEEP: {
+            actions: [assign({ assign: { testL1: { testL21: 2 } } })]
           }
         }
       },
@@ -327,5 +340,15 @@ describe('hsm tests', () => {
     expect(result.actions).to.be.an('array');
     expect(result.actions.length).to.equal(1);
     expect(result.actions[0].output).to.equal('test data');
+  });
+
+  it('make sure assign() can modify context deeply', async () => {
+    const { expect } = await chai;
+    expect(machine.context.assign.testL1.testL21).to.equal(3);
+    expect(machine.context.assign.testL1.testL22).to.equal(1);
+    const result = machine.dispatch('TEST_ASSIGN_DEEP');
+    expect(result).to.be.an('object');
+    expect(machine.context.assign.testL1.testL21).to.equal(2);
+    expect(machine.context.assign.testL1.testL22).to.equal(1);
   });
 });
