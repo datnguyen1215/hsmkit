@@ -5,23 +5,21 @@
  * @returns {object} A new object that is the result of deep merging all sources into the target.
  */
 function merge(target, ...sources) {
-  const output = { ...target };
-
-  if (!sources.length) return output;
+  if (!sources.length) return target;
   const source = sources.shift();
 
-  if (typeof output === 'object' && typeof source === 'object') {
+  if (typeof target === 'object' && typeof source === 'object') {
     for (const key in source) {
       if (source[key] && typeof source[key] === 'object') {
-        output[key] = output[key] || {};
-        output[key] = merge(output[key], source[key]);
+        target[key] = target[key] || {};
+        merge(target[key], source[key]);
       } else {
-        output[key] = source[key];
+        target[key] = source[key];
       }
     }
   }
 
-  return merge(output, ...sources);
+  return merge(target, ...sources);
 }
 
 export default merge;
