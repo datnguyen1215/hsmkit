@@ -9,7 +9,6 @@
     "all": "npm-run-all --parallel dev watch:tests",
     "dev": "nodemon --watch src/ --exec \"npm run build && npm run test:all\"",
     "watch:tests": "nodemon --watch tests/ --exec \"npm run test:all\"",
-    "jsdoc": "jsdoc -c jsdoc.json",
     "build": "vite build",
     "test": "mocha --require @babel/register",
     "test:all": "mocha --require @babel/register tests/*.test.js tests/**/*.test.js"
