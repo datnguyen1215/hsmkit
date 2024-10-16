@@ -1,6 +1,5 @@
 import assign from '../src/assign';
 import hsmjs from '../dist/hsmjs.cjs';
-import StateMachine from '../types/StateMachine';
 const chai = import('chai');
 
 describe('hsm tests', () => {
