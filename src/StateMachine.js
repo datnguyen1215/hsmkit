@@ -2,19 +2,19 @@ import StateNode from './StateNode';
 import assert from './utils/assert';
 import merge from './utils/merge';
 import flatten from './utils/flatten';
-import events from './utils/events';
+import { Emitter } from './utils/events';
 
 const DEFAULT_SETUP = { actions: {}, guards: {} };
 
 /**
  * @class
- * @extends {events.Emitter<'transition' | 'event'>}
+ * @extends {Emitter<'transition' | 'event'>}
  */
-class StateMachine extends events.Emitter {
+class StateMachine extends Emitter {
   /**
    * @param {object} opts
-   * @param {hsmjs.StateConfig} opts.config - The configuration of the state machine
-   * @param {hsmjs.StateMachineSetup} opts.setup - The setup of the state machine
+   * @param {StateConfig} opts.config - The configuration of the state machine
+   * @param {StateMachineSetup} opts.setup - The setup of the state machine
    */
   constructor({ config, setup }) {
     super();
@@ -31,19 +31,18 @@ class StateMachine extends events.Emitter {
 
     /**
      * @type {Object<string, StateNode>}
-     * @private
      **/
     this.states = {};
 
     /**
-     * @type {hsmjs.StateConfig}
+     * @type {StateConfig}
      **/
     this.config = config;
 
     this.context = this.config.context || {};
 
     /**
-     * @type {hsmjs.StateMachineSetup}
+     * @type {StateMachineSetup}
      **/
     this.setup = merge({}, DEFAULT_SETUP, setup);
 
@@ -71,7 +70,7 @@ class StateMachine extends events.Emitter {
    * Dispatch an event to the state machine.
    * @param {string} eventName - The name of the event
    * @param {any} data - The data of the event
-   * @return {hsmjs.DispatchResult}
+   * @return {DispatchResult}
    */
   dispatch(eventName, data) {
     assert(this._state, 'machine is not started.');
@@ -94,7 +93,7 @@ class StateMachine extends events.Emitter {
 
   /**
    * Starting the state machine.
-   * @return {hsmjs.DispatchResult}
+   * @return {DispatchResult}
    **/
   start() {
     return this.transition(this.root.name, { type: '(machine).start' });
@@ -129,8 +128,8 @@ class StateMachine extends events.Emitter {
 
   /**
    * @param {string} stateName - The name of the state
-   * @param {hsmjs.Event} event - The event object
-   * @returns {{ entry: hsmjs.ActionResult[], exit: hsmjs.ActionResult[] }}
+   * @param {DispatchEvent} event - The event object
+   * @returns {{ entry: ActionResult[], exit: ActionResult[] }}
    * @private
    */
   transition(stateName, event) {
@@ -204,8 +203,8 @@ class StateMachine extends events.Emitter {
 
   /**
    * @param {StateNode} state - The state node
-   * @param {hsmjs.Event} event - The event object
-   * @returns {hsmjs.ActionResult[]}
+   * @param {DispatchEvent} event - The event object
+   * @returns {ActionResult[]}
    * @private
    */
   exit(state, event) {
@@ -223,8 +222,8 @@ class StateMachine extends events.Emitter {
 
   /**
    * @param {StateNode} state - The state node
-   * @param {hsmjs.Event} event - The event object
-   * @returns {hsmjs.ActionResult[]}
+   * @param {DispatchEvent} event - The event object
+   * @returns {ActionResult[]}
    * @private
    */
   entry(state, event) {

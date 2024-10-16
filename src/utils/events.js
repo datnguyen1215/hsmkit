@@ -36,10 +36,9 @@ class Emitter {
 
   /**
    * Subscribe to an event once.
-   * @template TEventEnum
    * @param {TEventEnum} event - event name
    * @param {EventListener} callback - function to call when the event is emitted
-   * @returns {UnsubscribeListener}
+   * @returns {UnsubscribeListener} - unsubscribe the listener
    */
   once(event, callback) {
     const handler = (...args) => {
@@ -48,11 +47,12 @@ class Emitter {
     };
 
     this.on(event, handler);
+
+    return () => this.off(event, handler);
   }
 
   /**
    * Unsubscribe from an event.
-   * @template TEventEnum
    * @param {TEventEnum} event - event name
    * @param {EventListener} callback - function to call when the event is emitted
    * @returns {void}
@@ -64,7 +64,6 @@ class Emitter {
 
   /**
    * Emit an event.
-   * @template TEventEnum
    * @param {TEventEnum} event - event name
    * @param {...*} data - arguments to pass to the listeners
    * @returns {void}

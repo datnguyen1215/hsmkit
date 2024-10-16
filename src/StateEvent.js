@@ -5,7 +5,7 @@ class StateEvent {
   /**
    * @param {object} opts
    * @param {StateNode} opts.state - The state node.
-   * @param {string | hsmjs.EventNode | hsmjs.EventNode[]} opts.config - The configuration of the event.
+   * @param {string | EventNode | EventNode[]} opts.config - The configuration of the event.
    * @param {string} opts.name - The name of the event.
    */
   constructor({ state, config, name }) {
@@ -28,7 +28,7 @@ class StateEvent {
       const actions = node.actions || [];
       for (const action of actions)
         assert(
-          state.machine.setup.actions[action] || typeof action === 'function',
+          typeof action === 'function' || state.machine.setup.actions[action],
           `Invalid action: ${action}`
         );
 
@@ -49,8 +49,8 @@ class StateEvent {
   }
 
   /**
-   * @param {string | hsmjs.EventNode | hsmjs.EventNode[]} config
-   * @returns {hsmjs.EventNode[]}
+   * @param {string | EventNode | EventNode[]} config
+   * @returns {EventNode[]}
    */
   normalizeConfig(config) {
     switch (typeof config) {
@@ -68,7 +68,7 @@ class StateEvent {
   /**
    * Execute the event.
    * @param {object} data
-   * @returns {hsmjs.ExecuteResult}
+   * @returns {ExecuteResult}
    */
   execute(data) {
     for (const node of this.config) {
@@ -76,7 +76,7 @@ class StateEvent {
       // are true, the first one will be executed
       const guard = this.machine.setup.guards[node.cond];
 
-      if (guard && !guard()) continue;
+      if (guard && !guard(this.context, { type: this.name, data })) continue;
 
       if (!node.actions) return { target: node.target };
 

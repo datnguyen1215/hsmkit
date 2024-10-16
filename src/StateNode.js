@@ -2,12 +2,13 @@
  * @typedef {object} StateOptions
  * @property {StateMachine} opts.machine - The parent state machine
  * @property {string} opts.name - The name of the state
- * @property {StateNode} opts.parent - The parent state
+ * @property {StateNode} [opts.parent] - The parent state
  * @property {StateConfig} opts.config - The configuration of the state
  */
 
 import assert from './utils/assert';
 import StateEvent from './StateEvent';
+import StateMachine from './StateMachine';
 
 class StateNode {
   /**
@@ -35,9 +36,9 @@ class StateNode {
 
     /** @type {string} */
     this.initial = config.initial;
-    /** @type {string[]} */
+    /** @type {string[] | ActionFunction[]} */
     this.entry = config.entry || [];
-    /** @type {string[]} */
+    /** @type {string[] | ActionFunction[]} */
     this.exit = config.exit || [];
 
     this.machine.states[this.name] = this;
@@ -60,7 +61,7 @@ class StateNode {
   validateEntry() {
     for (const entry of this.entry) {
       assert(
-        this.machine.setup.actions[entry] || typeof entry === 'function',
+        typeof entry === 'function' || this.machine.setup.actions[entry],
         `Entry action not found: ${entry}`
       );
     }
@@ -74,7 +75,7 @@ class StateNode {
   validateExit() {
     for (const exit of this.exit) {
       assert(
-        this.machine.setup.actions[exit] || typeof exit === 'function',
+        typeof exit === 'function' || this.machine.setup.actions[exit],
         `Exit action not found: ${exit}`
       );
     }
@@ -82,7 +83,7 @@ class StateNode {
 
   /**
    * @param {Object<string, StateConfig>} states
-   * @returns {Object<string, State>}
+   * @returns {Object<string, StateNode>}
    * @private
    */
   parseStates(states) {
@@ -99,8 +100,8 @@ class StateNode {
   }
 
   /**
-   * @param {Object<string, hsmjs.EventConfig>} events
-   * @returns {Object<string, hsmjs.EventNode>}
+   * @param {Object<string, string | EventNode | EventNode[]>} events
+   * @returns {Object<string, StateEvent>}
    * @private
    */
   parseEvents(events) {
@@ -118,8 +119,8 @@ class StateNode {
   /**
    * Dispatch an event to the state. If the state doesn't handle the event,
    * it'll be dispatched to the parent state.
-   * @param {hsmjs.Event} event
-   * @returns {hsmjs.ExecuteResult | null}
+   * @param {DispatchEvent} event
+   * @returns {ExecuteResult | null}
    */
   dispatch(event) {
     assert(event, `event is required`);

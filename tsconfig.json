@@ -1,15 +1,11 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "NodeNext",
+    "checkJs": true,
     "allowJs": true,
     "declaration": true,
     "emitDeclarationOnly": true,
     "outFile": "./dist/hsmjs.d.ts",
     "baseUrl": ".",
-    "moduleResolution": "NodeNext",
-    "declarationMap": true,
-    "sourceMap": false,
     "rootDir": "./src"
   },
   "include": ["src/**/*"],
