@@ -3,6 +3,7 @@ import assert from './utils/assert';
 import merge from './utils/merge';
 import flatten from './utils/flatten';
 import { Emitter } from './utils/events';
+import DispatchResult from './DispatchResult';
 
 const DEFAULT_SETUP = { actions: {}, guards: {} };
 
@@ -81,14 +82,15 @@ class StateMachine extends Emitter {
 
     const result = this._state.dispatch(event);
 
-    if (!result) return { actions: [], entry: [], exit: [] };
+    if (!result)
+      return new DispatchResult({ actions: [], entry: [], exit: [] });
 
     const { actions = [], target } = result;
 
-    if (!target) return { actions };
+    if (!target) return new DispatchResult({ actions });
 
     const { entry, exit } = this.transition(target, event);
-    return { actions, entry, exit };
+    return new DispatchResult({ actions, entry, exit });
   }
 
   /**
@@ -96,7 +98,9 @@ class StateMachine extends Emitter {
    * @return {DispatchResult}
    **/
   start() {
-    return this.transition(this.root.name, { type: '(machine).start' });
+    return new DispatchResult(
+      this.transition(this.root.name, { type: '(machine).start' })
+    );
   }
 
   /**

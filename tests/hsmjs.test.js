@@ -235,16 +235,13 @@ describe('hsm tests', () => {
 
   it('dispatching CONNECT event should allow awaiting for Promise', async () => {
     const { expect } = await chai;
-    const result = machine.dispatch('CONNECT', {
+    const dispatchResult = machine.dispatch('CONNECT', {
       host: 'localhost',
       port: 8080
     });
 
-    const action = result.entry.find(x => x.action === 'connectWebSocket');
-    expect(action).to.be.an('object');
-    expect(action).to.have.property('output');
-    expect(action.output).to.have.property('then');
-    await action.output;
+    await dispatchResult.wait('connectWebSocket');
+
     expect(states.connectWebSocket).to.be.true;
     expect(machine.state.name).to.equal('(root).connected.idle');
   });

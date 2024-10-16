@@ -29,13 +29,6 @@
  **/
 
 /**
- * @typedef {object} DispatchResult
- * @property {ActionResult[]} [actions]
- * @property {ActionResult[]} [entry]
- * @property {ActionResult[]} [exit]
- **/
-
-/**
  * @typedef {object} EventConfig
  * @property {string | EventNode | EventNode[]} config
 
