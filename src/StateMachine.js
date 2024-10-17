@@ -14,8 +14,8 @@ const DEFAULT_SETUP = { actions: {}, guards: {} };
 class StateMachine extends Emitter {
   /**
    * @param {object} opts
-   * @param {StateConfig} opts.config - The configuration of the state machine
-   * @param {StateMachineSetup} opts.setup - The setup of the state machine
+   * @param {import('./types').StateConfig} opts.config - The configuration of the state machine
+   * @param {import('./types').StateMachineSetup} opts.setup - The setup of the state machine
    */
   constructor({ config, setup }) {
     super();
@@ -25,8 +25,8 @@ class StateMachine extends Emitter {
     assert(config, 'config is required');
 
     /**
-     * @type {StateNode}
      * @private
+     * @type {StateNode}
      **/
     this._state = null;
 
@@ -36,14 +36,14 @@ class StateMachine extends Emitter {
     this.states = {};
 
     /**
-     * @type {StateConfig}
+     * @type {import('./types').StateConfig}
      **/
     this.config = config;
 
     this.context = this.config.context || {};
 
     /**
-     * @type {StateMachineSetup}
+     * @type {import('./types').StateMachineSetup}
      **/
     this.setup = merge({}, DEFAULT_SETUP, setup);
 
@@ -112,9 +112,9 @@ class StateMachine extends Emitter {
   }
 
   /**
+   * @private
    * Validates the events of the state machine making sure that
    * the target states are valid.
-   * @private
    **/
   validateEvents() {
     for (const state of Object.values(this.states)) {
@@ -131,10 +131,10 @@ class StateMachine extends Emitter {
   }
 
   /**
-   * @param {string} stateName - The name of the state
-   * @param {DispatchEvent} event - The event object
-   * @returns {{ entry: ActionResult[], exit: ActionResult[] }}
    * @private
+   * @param {string} stateName - The name of the state
+   * @param {import('./types').DispatchEvent} event - The event object
+   * @returns {{ entry: import('./types').ActionResult[], exit: import('./types').ActionResult[] }}
    */
   transition(stateName, event) {
     assert(stateName, 'stateName is required');
@@ -152,7 +152,6 @@ class StateMachine extends Emitter {
     /**
      * @param {StateNode} state - The state node
      * @returns {StateNode[]}
-     * @private
      **/
     const ancestors = state => {
       if (!state) return [];
@@ -169,7 +168,6 @@ class StateMachine extends Emitter {
      * @param {StateNode[]} curAncestors - The current ancestors
      * @param {StateNode[]} nextAncestors - The next ancestors
      * @returns {{ entry: StateNode[], exit: StateNode[] }}
-     * @private
      **/
     const getEntryExit = (curAncestors, nextAncestors) => {
       const entry = [];
@@ -206,10 +204,10 @@ class StateMachine extends Emitter {
   }
 
   /**
-   * @param {StateNode} state - The state node
-   * @param {DispatchEvent} event - The event object
-   * @returns {ActionResult[]}
    * @private
+   * @param {StateNode} state - The state node
+   * @param {import('./types').DispatchEvent} event - The event object
+   * @returns {import('./types').ActionResult[]}
    */
   exit(state, event) {
     const actions = state.exit.map(action => {
@@ -225,10 +223,10 @@ class StateMachine extends Emitter {
   }
 
   /**
-   * @param {StateNode} state - The state node
-   * @param {DispatchEvent} event - The event object
-   * @returns {ActionResult[]}
    * @private
+   * @param {StateNode} state - The state node
+   * @param {import('./types').DispatchEvent} event - The event object
+   * @returns {import('./types').ActionResult[]}
    */
   entry(state, event) {
     const actions = state.entry.map(action => {

@@ -3,7 +3,7 @@
  * @property {StateMachine} opts.machine - The parent state machine
  * @property {string} opts.name - The name of the state
  * @property {StateNode} [opts.parent] - The parent state
- * @property {StateConfig} opts.config - The configuration of the state
+ * @property {import('./types').StateConfig} opts.config - The configuration of the state
  */
 
 import assert from './utils/assert';
@@ -36,9 +36,9 @@ class StateNode {
 
     /** @type {string} */
     this.initial = config.initial;
-    /** @type {string[] | ActionFunction[]} */
+    /** @type {string[] | import('./types').ActionFunction[]} */
     this.entry = config.entry || [];
-    /** @type {string[] | ActionFunction[]} */
+    /** @type {string[] | import('./types').ActionFunction[]} */
     this.exit = config.exit || [];
 
     this.machine.states[this.name] = this;
@@ -82,7 +82,7 @@ class StateNode {
   }
 
   /**
-   * @param {Object<string, StateConfig>} states
+   * @param {Object<string, import('./types').StateConfig>} states
    * @returns {Object<string, StateNode>}
    * @private
    */
@@ -100,7 +100,7 @@ class StateNode {
   }
 
   /**
-   * @param {Object<string, string | EventNode | EventNode[]>} events
+   * @param {Object<string, string | import('./types').EventNode | import('./types').EventNode[]>} events
    * @returns {Object<string, StateEvent>}
    * @private
    */
@@ -119,8 +119,8 @@ class StateNode {
   /**
    * Dispatch an event to the state. If the state doesn't handle the event,
    * it'll be dispatched to the parent state.
-   * @param {DispatchEvent} event
-   * @returns {ExecuteResult | null}
+   * @param {import('./types').DispatchEvent} event
+   * @returns {import('./types').ExecuteResult | null}
    */
   dispatch(event) {
     assert(event, `event is required`);

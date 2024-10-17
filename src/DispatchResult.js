@@ -1,9 +1,9 @@
 class DispatchResult {
   /**
    * @param {object} results
-   * @param {ActionResult[]} results.actions
-   * @param {ActionResult[]} results.entry
-   * @param {ActionResult[]} results.exit
+   * @param {import('./types').ActionResult[]} results.actions
+   * @param {import('./types').ActionResult[]} results.entry
+   * @param {import('./types').ActionResult[]} results.exit
    */
   constructor(result) {
     this.actions = result.actions || [];

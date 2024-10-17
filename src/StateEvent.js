@@ -5,7 +5,7 @@ class StateEvent {
   /**
    * @param {object} opts
    * @param {StateNode} opts.state - The state node.
-   * @param {string | EventNode | EventNode[]} opts.config - The configuration of the event.
+   * @param {string | import('./types').EventNode | import('./types').EventNode[]} opts.config - The configuration of the event.
    * @param {string} opts.name - The name of the event.
    */
   constructor({ state, config, name }) {
@@ -49,8 +49,8 @@ class StateEvent {
   }
 
   /**
-   * @param {string | EventNode | EventNode[]} config
-   * @returns {EventNode[]}
+   * @param {string | import('./types').EventNode | import('./types').EventNode[]} config
+   * @returns {import('./types').EventNode[]}
    */
   normalizeConfig(config) {
     switch (typeof config) {
@@ -68,7 +68,7 @@ class StateEvent {
   /**
    * Execute the event.
    * @param {object} data
-   * @returns {ExecuteResult}
+   * @returns {import('./types').ExecuteResult}
    */
   execute(data) {
     for (const node of this.config) {
