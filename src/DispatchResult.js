@@ -6,8 +6,11 @@ class DispatchResult {
    * @param {import('./types').ActionResult[]} results.exit
    */
   constructor(result) {
+    /** @type {import('./types').ActionResult[]} */
     this.actions = result.actions || [];
+    /** @type {import('./types').ActionResult[]} */
     this.entry = result.entry || [];
+    /** @type {import('./types').ActionResult[]} */
     this.exit = result.exit || [];
   }
 
