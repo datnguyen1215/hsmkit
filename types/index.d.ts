@@ -1,5 +1,5 @@
 export * from "./types";
-export * from "./hsmjs";
+export * from "./hsmkit";
 import assign from './assign';
 import StateNode from './StateNode';
 import StateMachine from './StateMachine';

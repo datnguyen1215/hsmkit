@@ -1,5 +1,5 @@
-import assign from '../src/assign';
-import hsmjs from '../dist/hsmjs.cjs';
+import assign from '../src/assign.js';
+import hsmkit from '../dist/hsmkit.cjs.js';
 const chai = import('chai');
 
 describe('hsm tests', () => {
@@ -107,7 +107,7 @@ describe('hsm tests', () => {
 
   it('should create state machine without any setups', async () => {
     const { expect } = await chai;
-    const m = hsmjs.create({
+    const m = hsmkit.create({
       config: {
         id: 'test',
         initial: 'idle',
@@ -140,7 +140,7 @@ describe('hsm tests', () => {
 
   it('should create with no exceptions', async () => {
     const { expect } = await chai;
-    machine = hsmjs.create({
+    machine = hsmkit.create({
       config,
       setup: {
         actions: {

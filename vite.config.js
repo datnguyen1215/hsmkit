@@ -5,9 +5,9 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     lib: {
-      entry: 'src/hsmjs.js',
-      name: 'hsmjs',
-      fileName: format => `hsmjs.${format}.js`,
+      entry: 'src/hsmkit.js',
+      name: 'hsmkit',
+      fileName: format => `hsmkit.${format}.js`,
       formats: ['es', 'cjs']
     },
     rollupOptions: {

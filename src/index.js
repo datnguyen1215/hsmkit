@@ -4,5 +4,5 @@ import StateMachine from './StateMachine';
 import StateEvent from './StateEvent';
 import DispatchResult from './DispatchResult';
 export * from './types';
-export * from './hsmjs';
+export * from './hsmkit';
 export { assign, StateNode, StateMachine, StateEvent, DispatchResult };
