@@ -25,6 +25,11 @@ class StateEvent {
         `node.target must be a string: ${node.target}`
       );
 
+      assert(
+        !node.actions || Array.isArray(node.actions),
+        `node.actions must be an array: ${node.actions}`
+      );
+
       const actions = node.actions || [];
       for (const action of actions)
         assert(
