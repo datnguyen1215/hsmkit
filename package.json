@@ -1,6 +1,6 @@
 {
   "name": "hsmkit",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "",
   "main": "dist/hsmkit.cjs.js",
   "module": "dist/hsmkit.es.js",
@@ -13,8 +13,22 @@
     "test": "mocha --require @babel/register",
     "test:all": "mocha --require @babel/register tests/*.test.js tests/**/*.test.js"
   },
-  "author": "",
-  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/datnguyen1215/hsm.git"
+  },
+  "keywords": [
+    "state",
+    "state-machine",
+    "javascript",
+    "hsmkit"
+  ],
+  "author": "Dat Nguyen <datnguyen1215@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/datnguyen1215/hsm/issues"
+  },
+  "homepage": "https://github.com/datnguyen1215/hsm#readme",
   "devDependencies": {
     "@babel/core": "^7.25.8",
     "@babel/preset-env": "^7.25.8",
