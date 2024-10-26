@@ -11,7 +11,8 @@
     "watch:tests": "nodemon --watch tests/ --exec \"npm run test:all\"",
     "build": "vite build && tsc -p tsconfig.json",
     "test": "mocha --require @babel/register",
-    "test:all": "mocha --require @babel/register tests/*.test.js tests/**/*.test.js"
+    "test:all": "mocha --require @babel/register tests/*.test.js tests/**/*.test.js",
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
