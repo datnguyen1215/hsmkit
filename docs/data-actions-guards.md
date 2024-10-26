@@ -1,6 +1,6 @@
-# Passing Data to Actions and Guards in `hsmjs`
+# Passing Data to Actions and Guards in `hsmkit`
 
-In `hsmjs`, passing data to actions and guards is straightforward. When you dispatch an event, you can include additional data that will be accessible in your action functions and guard conditions. This allows for dynamic behavior based on the specifics of each event.
+In `hsmkit`, passing data to actions and guards is straightforward. When you dispatch an event, you can include additional data that will be accessible in your action functions and guard conditions. This allows for dynamic behavior based on the specifics of each event.
 
 ## How to Pass Data
 
@@ -9,7 +9,7 @@ When dispatching an event, include a second parameter with your data. This data 
 ### Example
 
 ```javascript
-import { create, assign } from 'hsmjs';
+import { create, assign } from 'hsmkit';
 
 // Define your state machine configuration
 const config = {

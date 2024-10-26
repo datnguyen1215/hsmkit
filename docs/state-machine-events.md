@@ -1,6 +1,6 @@
-# Listening to Events with `hsmjs`
+# Listening to Events with `hsmkit`
 
-In `hsmjs`, you can listen to state machine events and transitions to perform actions when specific events occur or states change. This is useful for handling side-effects or updating your application based on the state machine's activity.
+In `hsmkit`, you can listen to state machine events and transitions to perform actions when specific events occur or states change. This is useful for handling side-effects or updating your application based on the state machine's activity.
 
 ## Listening to Events
 

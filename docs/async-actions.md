@@ -2,12 +2,12 @@
 
 In `xState`, handling asynchronous actions typically requires introducing additional states to accommodate the asynchronous operation, which can make the state machine configuration more complex. This often involves creating separate states for loading, success, and error scenarios.
 
-`hsmjs` allows you to directly wait for the `asyncAction` to complete without needing additional states for handling asynchronous behavior.
+`hsmkit` allows you to directly wait for the `asyncAction` to complete without needing additional states for handling asynchronous behavior.
 
 ## Example Usage
 
 ```javascript
-import { create } from 'hsmjs';
+import { create } from 'hsmkit';
 
 // Setup your machine with async actions
 const setup = {

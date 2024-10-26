@@ -1,6 +1,6 @@
-# Using Wildcard Events in `hsmjs`
+# Using Wildcard Events in `hsmkit`
 
-In `hsmjs`, wildcard events offer a flexible way to handle events that may not have explicit definitions in the state configuration. They are useful in scenarios where you want to ensure that certain actions always execute regardless of the event type or when handling multiple unspecified events in a similar manner.
+In `hsmkit`, wildcard events offer a flexible way to handle events that may not have explicit definitions in the state configuration. They are useful in scenarios where you want to ensure that certain actions always execute regardless of the event type or when handling multiple unspecified events in a similar manner.
 
 ## How to Use Wildcard Events
 
@@ -9,7 +9,7 @@ To define a wildcard event in your state machine configuration, use the `'*'` ke
 ### Example Usage
 
 ```javascript
-import { create, assign } from 'hsmjs';
+import { create, assign } from 'hsmkit';
 
 const config = {
   id: 'example',
