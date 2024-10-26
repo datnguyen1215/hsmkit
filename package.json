@@ -26,9 +26,9 @@
   "author": "Dat Nguyen <datnguyen1215@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/datnguyen1215/hsm/issues"
+    "url": "https://github.com/datnguyen1215/hsmkit/issues"
   },
-  "homepage": "https://github.com/datnguyen1215/hsm#readme",
+  "homepage": "https://github.com/datnguyen1215/hsmkit",
   "devDependencies": {
     "@babel/core": "^7.25.8",
     "@babel/preset-env": "^7.25.8",
