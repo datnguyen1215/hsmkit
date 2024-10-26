@@ -1,8 +1,8 @@
-# hsmjs: Hierarchical State Machine Library
+# hsmkit: Hierarchical State Machine Library
 
-`hsmjs` is a lightweight JavaScript library alternative to [xState](https://xstate.js.org/) but designed for simplicity and ease of use.
+`hsmkit` is a lightweight JavaScript library alternative to [xState](https://xstate.js.org/) but designed for simplicity and ease of use.
 
-`hsmjs` uses the same syntax as xState without actors, services, parallel states, and other advanced features. If you need any of these, you should consider using xState instead.
+`hsmkit` uses the same syntax as xState without actors, services, parallel states, and other advanced features. If you need any of these, you should consider using xState instead.
 
 It provides a simple API to define states, transitions, actions, and more, making it ideal for developers who want to implement state machines without the extra complexity.
 
@@ -28,15 +28,15 @@ It provides a simple API to define states, transitions, actions, and more, makin
 ## Installation
 
 ```bash
-npm install hsmjs
+npm install hsmkit
 ```
 
 ## Quick Start
 
-Below is a quick example to create and use a state machine with `hsmjs`.
+Below is a quick example to create and use a state machine with `hsmkit`.
 
 ```javascript
-import { create, assign } from 'hsmjs';
+import { create, assign } from 'hsmkit';
 
 // Define the state machine configuration
 const config = {
