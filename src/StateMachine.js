@@ -1,3 +1,7 @@
+/**
+ * @typedef {'transition' | 'event'} BaseEvent
+ **/
+
 import StateNode from './StateNode';
 import assert from './utils/assert';
 import merge from './utils/merge';
@@ -11,7 +15,7 @@ const DEFAULT_SETUP = { actions: {}, guards: {} };
  * @template {object} [TContext=never]
  * @template {string} [TEvent=never]
  * @class
- * @extends {Emitter<'transition' | 'event' | TEvent>}
+ * @extends {Emitter<BaseEvent | TEvent>}
  */
 class StateMachine extends Emitter {
   /**

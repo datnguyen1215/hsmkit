@@ -1,11 +1,12 @@
 export default StateMachine;
+export type BaseEvent = "transition" | "event";
 /**
  * @template {object} [TContext=never]
- * @template {string} [TStateMachineEvent=never]
+ * @template {string} [TEvent=never]
  * @class
- * @extends {Emitter<'transition' | 'event' | TStateMachineEvent>}
+ * @extends {Emitter<BaseEvent | TEvent>}
  */
-declare class StateMachine<TContext extends unknown = never, TStateMachineEvent extends string = never> extends Emitter<"transition" | "event" | TStateMachineEvent> {
+declare class StateMachine<TContext extends unknown = never, TEvent extends string = never> extends Emitter<TEvent | BaseEvent> {
     /**
      * State machine instance.
      * @param {object} opts
