@@ -15,13 +15,17 @@ export type DispatchEvent = {
     type: string;
     data?: object;
 };
-export type ActionFunction = (context: object, event: DispatchEvent) => any | Promise<any>;
+export type ActionOptions<TContext = object> = {
+    context: TContext;
+    event: DispatchEvent;
+};
+export type ActionFunction = (options: ActionOptions) => any | Promise<any>;
 export type StateMachineSetup = {
     actions?: {
         [key: string]: ActionFunction;
     };
     guards?: {
-        [key: string]: (arg0: any, arg1: DispatchEvent) => boolean;
+        [key: string]: (options: ActionOptions) => boolean;
     };
 };
 export type EventConfig = {

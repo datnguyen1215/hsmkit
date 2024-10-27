@@ -81,7 +81,11 @@ class StateEvent {
       // are true, the first one will be executed
       const guard = this.machine.setup.guards[node.cond];
 
-      if (guard && !guard(this.context, { type: this.name, data })) continue;
+      if (
+        guard &&
+        !guard({ context: this.context, event: { type: this.name, data } })
+      )
+        continue;
 
       if (!node.actions) return { target: node.target };
 
@@ -89,7 +93,10 @@ class StateEvent {
         const fn = this.machine.setup.actions[action] || action;
         return {
           state: this.state.name,
-          output: fn(this.context, { type: this.name, data }),
+          output: fn({
+            context: this.context,
+            event: { type: this.name, data }
+          }),
           action
         };
       });
