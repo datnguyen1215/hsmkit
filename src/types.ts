@@ -1,3 +1,5 @@
+import StateMachine from './StateMachine';
+
 export type StateConfig = {
   initial: string;
   id: string;
@@ -14,6 +16,7 @@ export type DispatchEvent = {
 };
 
 export type ActionOptions<TContext = object> = {
+  machine: StateMachine;
   context: TContext;
   event: DispatchEvent;
 };

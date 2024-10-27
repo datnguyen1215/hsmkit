@@ -40,7 +40,7 @@ describe('hsm tests', () => {
           CONNECT: 'connecting',
           TEST_FUNCTION_ACTION: {
             actions: [
-              (_, event) => {
+              ({ event }) => {
                 states.functionAction = true;
                 return event.data;
               }
@@ -64,13 +64,15 @@ describe('hsm tests', () => {
         entry: [assign({ socket: {} }), 'notifyConnected'],
         on: {
           SET_KEEPALIVE: {
-            actions: [assign({ keepalive: (_, event) => event.data.keepalive })]
+            actions: [
+              assign({ keepalive: ({ event }) => event.data.keepalive })
+            ]
           },
 
           SET_KEEPALIVE_TIMEOUT: {
             actions: [
               assign({
-                keepaliveTimeout: (_, event) => event.data.keepaliveTimeout
+                keepaliveTimeout: ({ event }) => event.data.keepaliveTimeout
               })
             ]
           },
@@ -144,7 +146,17 @@ describe('hsm tests', () => {
       config,
       setup: {
         actions: {
-          notifyDisconnected: () => {
+          notifyDisconnected: ({
+            context,
+            event,
+            machine: machineInstance
+          }) => {
+            expect(context, 'context should be passed in');
+            expect(event, 'event should be passed in');
+            expect(
+              machineInstance && machineInstance == machine,
+              'machine should be passed in'
+            );
             states.notifyDisconnected = true;
           },
           notifyConnected: () => {
@@ -255,7 +267,7 @@ describe('hsm tests', () => {
     const { expect } = await chai;
     expect(machine.context).to.be.an('object');
     expect(machine.context).to.have.property('socket');
-    expect(machine.context.socket).to.be.an('object');
+    expect(machine.context.socket).to.be.null;
   });
 
   it('should set keepalive to true', async () => {

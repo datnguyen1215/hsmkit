@@ -8,18 +8,23 @@ import merge from './utils/merge';
  *                        Values can be functions that take the context and event as parameters.
  * @returns {function} - A function that takes the current context and event, then updates the context.
  */
-const assign = obj => (context, event) => {
-  assert(obj, 'obj is required');
+const assign = obj => {
+  /**
+   * @param {import('./types').ActionOptions} options
+   */
+  return options => {
+    assert(obj, 'obj is required');
 
-  const values = Object.entries(obj).reduce(
-    (acc, [key, value]) => ({
-      ...acc,
-      [key]: typeof value === 'function' ? value(context, event) : value
-    }),
-    {}
-  );
+    const values = Object.entries(obj).reduce(
+      (acc, [key, value]) => ({
+        ...acc,
+        [key]: typeof value === 'function' ? value(options) : value
+      }),
+      {}
+    );
 
-  merge(context, values);
+    merge(options.context, values);
+  };
 };
 
 export default assign;

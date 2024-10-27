@@ -83,7 +83,11 @@ class StateEvent {
 
       if (
         guard &&
-        !guard({ context: this.context, event: { type: this.name, data } })
+        !guard({
+          machine: this.machine,
+          context: this.context,
+          event: { type: this.name, data }
+        })
       )
         continue;
 
@@ -94,6 +98,7 @@ class StateEvent {
         return {
           state: this.state.name,
           output: fn({
+            machine: this.machine,
             context: this.context,
             event: { type: this.name, data }
           }),
