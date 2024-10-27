@@ -12,7 +12,7 @@ import { create } from 'hsmkit';
 // Setup your machine with async actions
 const setup = {
   actions: {
-    asyncAction: (context, event) => {
+    asyncAction: ({ context, machine, event }) => {
       return new Promise(resolve => setTimeout(() => resolve('done'), 1000));
     }
   }

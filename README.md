@@ -85,10 +85,13 @@ const config = {
 // Define actions and setup
 const setup = {
   actions: {
-    notifyDisconnected: () => console.log('Disconnected'),
-    connectWebSocket: () => console.log('Connecting WebSocket'),
-    notifyConnected: () => console.log('Connected'),
-    disconnectWebSocket: () => console.log('Disconnecting WebSocket')
+    notifyDisconnected: ({ context, machine, event }) =>
+      console.log('Disconnected'),
+    connectWebSocket: ({ context, machine, event }) =>
+      console.log('Connecting WebSocket'),
+    notifyConnected: ({ context, machine, event }) => console.log('Connected'),
+    disconnectWebSocket: ({ context, machine, event }) =>
+      console.log('Disconnecting WebSocket')
   }
 };
 

@@ -30,12 +30,12 @@ const config = {
 
 const setup = {
   actions: {
-    logDetails: (context, event) => {
+    logDetails: ({ context, event, machine }) => {
       console.log(`Starting with details: ${event.data.details}`);
     }
   },
   guards: {
-    isValid: (context, event) => {
+    isValid: ({ context, event, machine }) => {
       return event.data && event.data.isValid;
     }
   }

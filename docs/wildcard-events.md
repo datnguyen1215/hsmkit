@@ -31,7 +31,7 @@ const config = {
 
 const setup = {
   actions: {
-    logEvent: (context, event) => {
+    logEvent: ({ context, event, machine }) => {
       console.log(`Wildcard event triggered: ${event.type}`);
     }
   }
