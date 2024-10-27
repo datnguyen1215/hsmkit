@@ -8,8 +8,10 @@ import DispatchResult from './DispatchResult';
 const DEFAULT_SETUP = { actions: {}, guards: {} };
 
 /**
+ * @template {object} [TContext=never]
+ * @template {string} [TStateMachineEvent=never]
  * @class
- * @extends {Emitter<'transition' | 'event'>}
+ * @extends {Emitter<'transition' | 'event' | TStateMachineEvent>}
  */
 class StateMachine extends Emitter {
   /**
@@ -40,6 +42,7 @@ class StateMachine extends Emitter {
      **/
     this.config = config;
 
+    /** @type {object | TContext} **/
     this.context = this.config.context || {};
 
     /**

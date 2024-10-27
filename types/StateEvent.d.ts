@@ -8,8 +8,8 @@ declare class StateEvent {
     name: string;
     state: StateNode;
     config: import("./types").EventNode[];
-    get context(): object;
-    get machine(): import("./StateMachine").default;
+    get context(): any;
+    get machine(): import("./StateMachine").default<never, never>;
     normalizeConfig(config: string | import("./types").EventNode | import("./types").EventNode[]): import("./types").EventNode[];
     execute(data: object): import("./types").ExecuteResult;
 }

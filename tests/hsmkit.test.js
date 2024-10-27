@@ -3,7 +3,7 @@ import hsmkit from '../dist/hsmkit.cjs.js';
 const chai = import('chai');
 
 describe('hsm tests', () => {
-  /** @type {StateMachine} */
+  /** @type {import('../types').StateMachine} */
   let machine = null;
 
   // used to keep track whether the actions were called.

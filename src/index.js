@@ -6,3 +6,4 @@ import DispatchResult from './DispatchResult';
 export * from './types';
 export * from './hsmkit';
 export { assign, StateNode, StateMachine, StateEvent, DispatchResult };
+export default { assign, StateNode, StateMachine, StateEvent, DispatchResult };

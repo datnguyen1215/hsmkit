@@ -1,5 +1,5 @@
 export default StateMachine;
-declare class StateMachine extends Emitter<"transition" | "event"> {
+declare class StateMachine<TContext extends unknown = never, TStateMachineEvent extends string = never> extends Emitter<"transition" | "event" | TStateMachineEvent> {
     constructor({ config, setup }: {
         config: import("./types").StateConfig;
         setup: import("./types").StateMachineSetup;
@@ -9,7 +9,7 @@ declare class StateMachine extends Emitter<"transition" | "event"> {
         [x: string]: StateNode;
     };
     config: import("./types").StateConfig;
-    context: object;
+    context: object | TContext;
     setup: import("./types").StateMachineSetup;
     root: StateNode;
     get state(): StateNode;
