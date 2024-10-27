@@ -16,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/datnguyen1215/hsm.git"
+    "url": "git+https://github.com/datnguyen1215/hsmkit.git"
   },
   "keywords": [
     "hsm",
