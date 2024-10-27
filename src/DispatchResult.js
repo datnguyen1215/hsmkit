@@ -17,8 +17,8 @@ class DispatchResult {
   /**
    * Wait for an action to be completed.
    * Typically used to waiting for async actions.
-   * @param {string} actionName
-   * @returns {Promise<any>}
+   * @param {string} actionName - Name of the action to be waited for.
+   * @returns {Promise<any>} - Output of a single action.
    */
   async wait(actionName) {
     const actions = [...this.actions, ...this.entry, ...this.exit];
@@ -32,7 +32,7 @@ class DispatchResult {
   /**
    * Wait for all actions to be completed.
    * Typically used to waiting for async actions.
-   * @returns {Promise<any[]>}
+   * @returns {Promise<any[]>} - Output of all actions.
    */
   async waitAll() {
     const actions = [...this.actions, ...this.entry, ...this.exit];

@@ -15,6 +15,7 @@ const DEFAULT_SETUP = { actions: {}, guards: {} };
  */
 class StateMachine extends Emitter {
   /**
+   * State machine instance.
    * @param {object} opts
    * @param {import('./types').StateConfig} opts.config - The configuration of the state machine
    * @param {import('./types').StateMachineSetup} opts.setup - The setup of the state machine
@@ -72,9 +73,9 @@ class StateMachine extends Emitter {
 
   /**
    * Dispatch an event to the state machine.
-   * @param {string} eventName - The name of the event
-   * @param {any} data - The data of the event
-   * @return {DispatchResult}
+   * @param {string} eventName - Name of the event to be triggered.
+   * @param {any} data - Data to be passed into actions/guards.
+   * @return {DispatchResult} Result of the dispatch.
    */
   dispatch(eventName, data) {
     assert(this._state, 'machine is not started.');
@@ -98,7 +99,7 @@ class StateMachine extends Emitter {
 
   /**
    * Starting the state machine.
-   * @return {DispatchResult}
+   * @return {DispatchResult} Result of the dispatch (usually entry/exit).
    **/
   start() {
     return new DispatchResult(

@@ -7,7 +7,7 @@
     "outDir": "./types",
     "baseUrl": ".",
     "rootDirs": ["./src"],
-    "removeComments": true
+    "removeComments": false
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "types"]
