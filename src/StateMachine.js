@@ -9,9 +9,9 @@ const DEFAULT_SETUP = { actions: {}, guards: {} };
 
 /**
  * @template {object} [TContext=never]
- * @template {string} [TStateMachineEvent=never]
+ * @template {string} [TEvent=never]
  * @class
- * @extends {Emitter<'transition' | 'event' | TStateMachineEvent>}
+ * @extends {Emitter<'transition' | 'event' | TEvent>}
  */
 class StateMachine extends Emitter {
   /**
