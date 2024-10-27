@@ -1,10 +1,10 @@
 import StateMachine from './StateMachine';
 
-export type StateConfig = {
+export type StateConfig<TContext = object> = {
   initial: string;
   id: string;
-  context: object;
-  states: { [key: string]: StateConfig };
+  context: TContext;
+  states: { [key: string]: StateConfig<TContext> };
   on: { [key: string]: string | EventNode | EventNode[] };
   entry: string[];
   exit: string[];
