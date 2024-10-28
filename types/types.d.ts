@@ -1,10 +1,10 @@
 import StateMachine from './StateMachine';
-export type StateConfig = {
+export type StateConfig<TContext = object> = {
     initial: string;
     id: string;
-    context: object;
+    context: TContext;
     states: {
-        [key: string]: StateConfig;
+        [key: string]: StateConfig<TContext>;
     };
     on: {
         [key: string]: string | EventNode | EventNode[];
@@ -16,10 +16,10 @@ export type DispatchEvent = {
     type: string;
     data?: object;
 };
-export type ActionOptions<TContext = object> = {
-    machine: StateMachine;
+export type ActionOptions<TContext = object, TEvent = DispatchEvent, TMachine = StateMachine> = {
+    machine: TMachine;
     context: TContext;
-    event: DispatchEvent;
+    event: TEvent;
 };
 export type ActionFunction = (options: ActionOptions) => any | Promise<any>;
 export type StateMachineSetup = {
