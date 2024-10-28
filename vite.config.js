@@ -5,7 +5,7 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     lib: {
-      entry: 'src/hsmkit.js',
+      entry: 'src/index.js',
       name: 'hsmkit',
       fileName: format => `hsmkit.${format}.js`,
       formats: ['es', 'cjs']

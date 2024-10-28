@@ -1,5 +1,4 @@
 import StateMachine from './StateMachine';
-import assign from './assign';
 
 /**
  * @param {object} options
@@ -9,4 +8,4 @@ import assign from './assign';
  */
 const create = options => new StateMachine(options);
 
-export { create, assign };
+export default create;
