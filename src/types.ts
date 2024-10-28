@@ -15,10 +15,14 @@ export type DispatchEvent = {
   data?: object;
 };
 
-export type ActionOptions<TContext = object> = {
-  machine: StateMachine;
+export type ActionOptions<
+  TContext = object,
+  TEvent = DispatchEvent,
+  TMachine = StateMachine
+> = {
+  machine: TMachine;
   context: TContext;
-  event: DispatchEvent;
+  event: TEvent;
 };
 
 export type ActionFunction = (options: ActionOptions) => any | Promise<any>;
