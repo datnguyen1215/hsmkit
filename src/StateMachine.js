@@ -223,7 +223,7 @@ class StateMachine extends Emitter {
       return {
         state: this._state.name,
         action,
-        output: fn(this.context, event)
+        output: fn({ context: this.context, event, machine: this })
       };
     });
 
@@ -242,7 +242,7 @@ class StateMachine extends Emitter {
       return {
         state: this._state.name,
         action,
-        output: fn(this.context, event)
+        output: fn({ context: this.context, event, machine: this })
       };
     });
 

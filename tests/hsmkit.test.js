@@ -162,7 +162,13 @@ describe('hsm tests', () => {
           notifyConnected: () => {
             states.notifyConnected = true;
           },
-          connectWebSocket: () => {
+          connectWebSocket: ({ context, event, machine: machineInstance }) => {
+            expect(context, 'context should be passed in');
+            expect(event, 'event should be passed in');
+            expect(
+              machineInstance && machineInstance == machine,
+              'machine should be passed in'
+            );
             return new Promise(async resolve => {
               states.connectWebSocket = true;
 
