@@ -86,8 +86,7 @@ describe('hsm tests', () => {
         states: {
           idle: {
             on: {
-              SEND_MESSAGE: 'sending',
-              DISCONNECT: 'websocket.disconnecting'
+              SEND_MESSAGE: 'sending'
             }
           },
           sending: {

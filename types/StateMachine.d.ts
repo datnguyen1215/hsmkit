@@ -71,7 +71,7 @@ declare class StateMachine<TContext extends unknown = never, TEvent extends stri
     private validateEvents;
     /**
      * @private
-     * @param {string} stateName - The name of the state
+     * @param {StateNode} next - The name of the state
      * @param {import('./types').DispatchEvent} event - The event object
      * @returns {{ entry: import('./types').ActionResult[], exit: import('./types').ActionResult[] }}
      */

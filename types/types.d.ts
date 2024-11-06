@@ -1,4 +1,5 @@
 import StateMachine from './StateMachine';
+import StateNode from './StateNode';
 export type StateConfig<TContext = object> = {
     initial: string;
     id: string;
@@ -39,7 +40,7 @@ export type EventNode = {
     cond?: string;
 };
 export type ExecuteResult = {
-    target?: string;
+    target?: StateNode;
     actions?: ActionResult[];
 };
 export type ActionResult = {

@@ -91,7 +91,17 @@ class StateEvent {
       )
         continue;
 
-      if (!node.actions) return { target: node.target };
+      const getTarget = () => {
+        if (!node.target) return null;
+
+        return (
+          this.state.getNextState(node.target) ||
+          this.machine.states[node.target]
+        );
+      };
+
+      const target = getTarget();
+      if (!node.actions) return { target };
 
       const results = node.actions.map(action => {
         const fn = this.machine.setup.actions[action] || action;
@@ -106,7 +116,7 @@ class StateEvent {
         };
       });
 
-      return { target: node.target, actions: results };
+      return { target, actions: results };
     }
   }
 }

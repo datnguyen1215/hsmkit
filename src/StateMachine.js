@@ -107,7 +107,7 @@ class StateMachine extends Emitter {
    **/
   start() {
     return new DispatchResult(
-      this.transition(this.root.name, { type: '(machine).start' })
+      this.transition(this.root, { type: '(machine).start' })
     );
   }
 
@@ -140,21 +140,18 @@ class StateMachine extends Emitter {
 
   /**
    * @private
-   * @param {string} stateName - The name of the state
+   * @param {StateNode} next - The name of the state
    * @param {import('./types').DispatchEvent} event - The event object
    * @returns {{ entry: import('./types').ActionResult[], exit: import('./types').ActionResult[] }}
    */
-  transition(stateName, event) {
-    assert(stateName, 'stateName is required');
-
-    const next = this._state?.getNextState(stateName) || this.states[stateName];
-    assert(next, `state not found: ${stateName}`);
+  transition(next, event) {
+    assert(next, 'next state is required');
 
     if (next.initial) {
       const prev = this._state;
       this._state = next;
       this.emit('transition', next, prev);
-      return this.transition(next.initial, event);
+      return this.transition(next.states[next.initial], event);
     }
 
     /**
