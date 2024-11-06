@@ -61,7 +61,7 @@ describe('hsm tests', () => {
       },
       connected: {
         initial: 'idle',
-        entry: [assign({ socket: {} }), 'notifyConnected'],
+        entry: [assign({ socket: null }), 'notifyConnected'],
         on: {
           SET_KEEPALIVE: {
             actions: [
