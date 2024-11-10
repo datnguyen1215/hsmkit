@@ -45,6 +45,12 @@ declare class StateNode {
         [x: string]: StateEvent;
     };
     /**
+     * Check if the state matches the provided state value path
+     * @param {string} stateValue - State value to check
+     * @returns {boolean}
+     */
+    matches(stateValue: string): boolean;
+    /**
      * Validates the entry actions of the state making sure that
      * they are valid.
      * @private

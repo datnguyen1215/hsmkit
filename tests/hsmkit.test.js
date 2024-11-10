@@ -86,7 +86,8 @@ describe('hsm tests', () => {
         states: {
           idle: {
             on: {
-              SEND_MESSAGE: 'sending'
+              SEND_MESSAGE: 'sending',
+              DISCONNECT: 'websocket.disconnecting'
             }
           },
           sending: {
@@ -364,5 +365,65 @@ describe('hsm tests', () => {
     expect(result).to.be.an('object');
     expect(machine.context.assign.testL1.testL21).to.equal(2);
     expect(machine.context.assign.testL1.testL22).to.equal(1);
+  });
+
+  describe('matches()', () => {
+    it('should match exact state paths', async () => {
+      const { expect } = await chai;
+
+      // Start machine in disconnected state
+      machine.stop();
+      machine.start();
+      expect(machine.matches('disconnected')).to.be.true;
+
+      // Dispatch CONNECT and verify connecting state
+      machine.dispatch('CONNECT');
+      expect(machine.matches('connecting')).to.be.true;
+      machine.dispatch('CONNECT_SUCCESS');
+
+      // Wait for connection and verify connected.idle state
+      expect(machine.matches('connected.idle')).to.be.true;
+      expect(machine.matches('disconnected')).to.be.false;
+      expect(machine.matches('connected.sending')).to.be.false;
+    });
+
+    it('should match when transitioning between states', async () => {
+      const { expect } = await chai;
+
+      // First ensure we're connected
+      machine.stop();
+      machine.start();
+      machine.dispatch('CONNECT');
+      expect(machine.matches('connecting')).to.be.true;
+      machine.dispatch('CONNECT_SUCCESS');
+
+      // Wait for connection to complete
+      expect(machine.matches('connected.idle')).to.be.true;
+
+      // Now test the sending transition
+      machine.dispatch('SEND_MESSAGE');
+      expect(machine.matches('connected.sending')).to.be.true;
+      machine.dispatch('MESSAGE_SENT');
+
+      expect(machine.matches('connected.idle')).to.be.true;
+    });
+
+    it('should match after disconnecting', async () => {
+      const { expect } = await chai;
+
+      machine.dispatch('DISCONNECT');
+      expect(machine.matches('disconnecting')).to.be.true;
+
+      machine.dispatch('DISCONNECT_SUCCESS');
+      expect(machine.matches('disconnected')).to.be.true;
+    });
+
+    it('should handle invalid state paths', async () => {
+      const { expect } = await chai;
+
+      expect(machine.matches('invalid.state')).to.be.false;
+      expect(machine.matches('connected.invalid')).to.be.false;
+      expect(machine.matches('')).to.be.false;
+    });
   });
 });

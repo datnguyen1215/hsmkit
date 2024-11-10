@@ -120,6 +120,15 @@ class StateMachine extends Emitter {
   }
 
   /**
+   * Check if the current state matches the given state path.
+   * @param {string} statePath - The state path to match against
+   * @returns {boolean} True if the current state matches the path
+   */
+  matches(statePath) {
+    return this.state.matches(statePath);
+  }
+
+  /**
    * @private
    * Validates the events of the state machine making sure that
    * the target states are valid.

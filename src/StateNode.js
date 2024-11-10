@@ -54,6 +54,36 @@ class StateNode {
   }
 
   /**
+   * Check if the state matches the provided state value path
+   * @param {string} stateValue - State value to check
+   * @returns {boolean}
+   */
+  matches(stateValue) {
+    if (!stateValue) return false;
+
+    // Handle exact matches first
+    if (this.name === stateValue || this.id === stateValue) return true;
+
+    // Split both the current state path and target state value into segments
+    const targetSegments = stateValue.split('.');
+    const currentSegments = this.name.split('.');
+
+    // The target path should not be longer than the current state path
+    if (targetSegments.length > currentSegments.length) return false;
+
+    // Check if all segments match from right to left
+    for (let i = 0; i < targetSegments.length; i++) {
+      if (
+        targetSegments[i] !==
+        currentSegments[currentSegments.length - targetSegments.length + i]
+      )
+        return false;
+    }
+
+    return true;
+  }
+
+  /**
    * Validates the entry actions of the state making sure that
    * they are valid.
    * @private
