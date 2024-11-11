@@ -207,12 +207,16 @@ class StateMachine extends Emitter {
       [next, ...nextAncestors]
     );
 
+    // make sure to call exit actions before switching the states.
     const exitResults = flatten(exit.map(x => this.exit(x, event)));
-    const entryResults = flatten(entry.map(x => this.entry(x, event)));
 
+    // switch the states
     const prev = this._state;
     this._state = next;
     this.emit('transition', next, prev);
+
+    // now we can call the entry actions because we've already switched.
+    const entryResults = flatten(entry.map(x => this.entry(x, event)));
 
     return { entry: entryResults, exit: exitResults };
   }

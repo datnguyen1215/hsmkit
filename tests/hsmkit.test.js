@@ -426,4 +426,35 @@ describe('hsm tests', () => {
       expect(machine.matches('')).to.be.false;
     });
   });
+
+  describe('chain transition from initial', () => {
+    const machine = hsmkit.create({
+      config: {
+        id: 'test',
+        initial: 'idle',
+        states: {
+          idle: {
+            entry: ['testAction'],
+            on: {
+              TEST: 'test'
+            }
+          },
+          test: {}
+        }
+      },
+      setup: {
+        actions: {
+          testAction: () => {
+            machine.dispatch('TEST');
+          }
+        }
+      }
+    });
+
+    it('should start in test state because of immediately entry', async () => {
+      const { expect } = await chai;
+      machine.start();
+      expect(machine.state.name).to.equal('(root).test');
+    });
+  });
 });
